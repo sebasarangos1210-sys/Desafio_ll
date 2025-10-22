@@ -1,92 +1,106 @@
-#include <string>
-using namespace std;
+#include "prototipados.h"
 
-class MensajePublicitario {
-private:
-    string contenido;
-    int categoria;
-    int vecesMostrado;
+// Constructor por defecto
+MensajePublicitario::MensajePublicitario()
+    : contenido(""), categoria(1), vecesMostrado(0) {
+}
 
-public:
-    // Constructor por defecto
-    MensajePublicitario() : contenido(""), categoria(1), vecesMostrado(0) {}
-
-    // Constructor parametrizado
-    MensajePublicitario(const string& cont, int cat)
-        : contenido(cont), categoria(cat), vecesMostrado(0) {
-        // Validar que la categoría sea válida (1, 2 o 3)
-        if (categoria < 1 || categoria > 3) {
-            categoria = 1;  // Por defecto categoría C
-        }
-        // Validar que el contenido no exceda 500 caracteres
-        if (contenido.length() > 500) {
-            contenido = contenido.substr(0, 500);
-        }
+// Constructor parametrizado
+MensajePublicitario::MensajePublicitario(const string& cont, int cat)
+    : contenido(cont), categoria(cat), vecesMostrado(0) {
+    // Validar que la categoría sea válida (1, 2 o 3)
+    if (categoria < 1 || categoria > 3) {
+        categoria = 1;  // Por defecto categoría C
     }
-
-    // Destructor
-    ~MensajePublicitario() {
-        // No hay memoria dinámica que liberar en esta clase
+    // Validar que el contenido no exceda 500 caracteres
+    if (contenido.length() > 500) {
+        contenido = contenido.substr(0, 500);
     }
+}
 
-    // Retorna la prioridad según la categoría
-    // C=1 (1x), B=2 (2x), AAA=3 (3x)
-    int obtenerPrioridad() const {
-        return categoria;
-    }
+// Destructor
+MensajePublicitario::~MensajePublicitario() {
+    // No hay memoria dinámica que liberar en esta clase
+}
 
-    // Incrementa el contador de veces que se ha mostrado este mensaje
-    void incrementarContador() {
-        vecesMostrado++;
-    }
+// Retorna la prioridad según la categoría
+int MensajePublicitario::obtenerPrioridad() const {
+    return categoria;
+}
 
-    // Valida que el mensaje sea válido
-    bool esValido() const {
-        return !contenido.empty() &&
-               contenido.length() <= 500 &&
-               categoria >= 1 &&
-               categoria <= 3;
-    }
+// Incrementa el contador de veces mostrado
+void MensajePublicitario::incrementarContador() {
+    vecesMostrado++;
+}
 
-    // --- GETTERS ---
-    string getContenido() const {
-        return contenido;
-    }
+// Valida que el mensaje sea válido
+bool MensajePublicitario::esValido() const {
+    return !contenido.empty() &&
+           contenido.length() <= 500 &&
+           categoria >= 1 &&
+           categoria <= 3;
+}
 
-    int getCategoria() const {
-        return categoria;
-    }
+// --- GETTERS ---
+string MensajePublicitario::getContenido() const {
+    return contenido;
+}
 
-    int getVecesMostrado() const {
-        return vecesMostrado;
-    }
+int MensajePublicitario::getCategoria() const {
+    return categoria;
+}
 
-    // --- SETTERS ---
-    void setContenido(const string& cont) {
-        if (cont.length() <= 500) {
-            contenido = cont;
-        }
-    }
+int MensajePublicitario::getVecesMostrado() const {
+    return vecesMostrado;
+}
 
-    void setCategoria(int cat) {
-        if (cat >= 1 && cat <= 3) {
-            categoria = cat;
-        }
+string MensajePublicitario::getNombreCategoria() const {
+    switch(categoria) {
+    case 1: return "C";
+    case 2: return "B";
+    case 3: return "AAA";
+    default: return "Desconocida";
     }
+}
 
-    //resetear contador
-    void resetearContador() {
-        vecesMostrado = 0;
+// --- SETTERS ---
+void MensajePublicitario::setContenido(const string& cont) {
+    if (cont.length() <= 500) {
+        contenido = cont;
     }
+}
 
-    //obtener nombre de categoría como string
-    string getNombreCategoria() const {
-        switch(categoria) {
-        case 1: return "C";
-        case 2: return "B";
-        case 3: return "AAA";
-        default: return "Desconocida";
-        }
+void MensajePublicitario::setCategoria(int cat) {
+    if (cat >= 1 && cat <= 3) {
+        categoria = cat;
     }
-};
+}
+
+void MensajePublicitario::resetearContador() {
+    vecesMostrado = 0;
+}
+
+// --- SOBRECARGA DE OPERADORES ---
+
+// Comparar por prioridad (mayor prioridad > menor prioridad)
+bool MensajePublicitario::operator>(const MensajePublicitario& otro) const {
+    return categoria > otro.categoria;
+}
+
+// Comparar por prioridad (menor prioridad < mayor prioridad)
+bool MensajePublicitario::operator<(const MensajePublicitario& otro) const {
+    return categoria < otro.categoria;
+}
+
+// Comparar por igualdad de contenido
+bool MensajePublicitario::operator==(const MensajePublicitario& otro) const {
+    return contenido == otro.contenido && categoria == otro.categoria;
+}
+
+// Calcular memoria usada por esta instancia
+int MensajePublicitario::calcularMemoriaUsada() const {
+    int total = sizeof(*this);  // Tamaño base del objeto
+    total += contenido.capacity();  // Memoria del string
+    return total;
+}
 
