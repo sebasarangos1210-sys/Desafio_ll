@@ -151,7 +151,7 @@ Credito& Credito::operator=(const Credito& otro) {
 }
 
 // Comparar créditos por código de afiliación
-bool Credito::operator== st {
+bool Credito::operator==(const Credito& otro) const {
     return codigoAfiliacion == otro.codigoAfiliacion;
 }
 
