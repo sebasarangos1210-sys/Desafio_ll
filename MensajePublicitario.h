@@ -7,7 +7,7 @@ using namespace std;
 class MensajePublicitario {
 private:
     string contenido;
-    int categoria;      // 1=C, 2=B, 3=AAA
+    int categoria;
     int vecesMostrado;
 
 public:

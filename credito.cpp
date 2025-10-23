@@ -46,7 +46,7 @@ Credito::~Credito() {
     }
 }
 
-// Validar código de afiliación (10 caracteres alfanuméricos)
+// Validar código de afiliación (10 caracteres)
 bool Credito::validarCodigoAfiliacion(const string& codigo) const {
     if (codigo.length() != 10) {
         return false;
@@ -151,7 +151,7 @@ Credito& Credito::operator=(const Credito& otro) {
 }
 
 // Comparar créditos por código de afiliación
-bool Credito::operator==(const Credito& otro) const {
+bool Credito::operator== st {
     return codigoAfiliacion == otro.codigoAfiliacion;
 }
 
