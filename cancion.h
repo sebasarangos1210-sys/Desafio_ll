@@ -2,7 +2,7 @@
 #define CANCION_H
 
 #include <string>
-#include "Credito.h"  // ← ¡MUY IMPORTANTE!
+#include "Credito.h"
 using namespace std;
 
 class Cancion {
@@ -11,7 +11,7 @@ private:
     string nombre;
     int duracion;
     string ubicacionArchivo;
-    Credito** creditos;  // ← Línea 14 aprox (debe funcionar con el include)
+    Credito** creditos;
     int numCreditos;
     int capacidadCreditos;
     int vecesReproducida;
@@ -24,9 +24,9 @@ public:
     Cancion(const Cancion& otra);
     ~Cancion();
 
-    void agregarCredito(Credito* credito);  // ← Línea 27 aprox
-    bool eliminarCredito(const string& codigoAfiliacion);  // ← Línea 29
-    Credito* buscarCredito(const string& codigoAfiliacion) const;  // ← Línea 30
+    void agregarCredito(Credito* credito);
+    bool eliminarCredito(const string& codigoAfiliacion);
+    Credito* buscarCredito(const string& codigoAfiliacion) const;
     Credito** obtenerCreditosPorTipo(int tipo, int& cantidad) const;
 
     int extraerIdArtista() const;
@@ -59,4 +59,4 @@ public:
     int calcularMemoriaUsada() const;
 };
 
-#endif  // ← ¡DEBE ESTAR!
+#endif

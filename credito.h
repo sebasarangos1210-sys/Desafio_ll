@@ -40,4 +40,4 @@ public:
     int calcularMemoriaUsada() const;
 };
 
-#endif  // ← ¡ESTE DEBE ESTAR AL FINAL!
+#endif

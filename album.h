@@ -2,7 +2,7 @@
 #define ALBUM_H
 
 #include <string>
-#include "Cancion.h"  // ← Esto incluye automáticamente Credito.h
+#include "Cancion.h"
 using namespace std;
 
 class Album {
@@ -25,7 +25,7 @@ private:
     void redimensionarCanciones();
 
 public:
-    Album();  // ← CORREGIDO: Era "Cancion()" antes
+    Album();
     Album(int id, const string& nom, const string& fecha, const string& sello, const string& portada);
     Album(const Album& otro);
     ~Album();
@@ -72,4 +72,4 @@ public:
     int calcularMemoriaUsada() const;
 };
 
-#endif  // ← ¡DEBE ESTAR!
+#endif
