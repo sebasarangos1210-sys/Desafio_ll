@@ -56,6 +56,7 @@ public:
     string* getGeneros() const;
 
     void setNombre(const string& nom);
+    void setId(int nuevoId);
     void setFechaLanzamiento(const string& fecha);
     void setSelloDisquero(const string& sello);
     void setPortada(const string& port);

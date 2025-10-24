@@ -274,6 +274,10 @@ void Album::setNombre(const string& nom) {
     nombre = nom;
 }
 
+void Album::setId(int nuevoId) {
+    id = nuevoId;
+}
+
 void Album::setFechaLanzamiento(const string& fecha) {
     fechaLanzamiento = fecha;
 }
@@ -365,14 +369,14 @@ Cancion* Album::operator[](int indice) const {
 
 int Album::calcularMemoriaUsada() const {
     int total = sizeof(*this);
-    total += nombre.capacity();
-    total += fechaLanzamiento.capacity();
-    total += selloDisquero.capacity();
-    total += portada.capacity();
+    total += nombre.length();
+    total += fechaLanzamiento.length();
+    total += selloDisquero.length();
+    total += portada.length();
 
     total += sizeof(string) * capacidadGeneros;
     for (int i = 0; i < numGeneros; i++) {
-        total += generos[i].capacity();
+        total += generos[i].length();
     }
 
     total += sizeof(Cancion*) * capacidadCanciones;

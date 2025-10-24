@@ -1,15 +1,13 @@
 #include "Usuario.h"
 
 Usuario::Usuario()
-    : nickname(nullptr), membresia(0), ciudad(""), pais(""),
+    : nickname(""), membresia(0), ciudad(""), pais(""),
     fechaInscripcion(""), listaFavoritos(nullptr), ultimoMensajePublicitario(-1) {
-    nickname = new string("");
 }
 
 Usuario::Usuario(const string& nick, int memb, const string& city, const string& country, const string& fecha)
-    : nickname(nullptr), membresia(memb), ciudad(city), pais(country),
+    : nickname(nick), membresia(memb), ciudad(city), pais(country),
     fechaInscripcion(fecha), listaFavoritos(nullptr), ultimoMensajePublicitario(-1) {
-    nickname = new string(nick);
 
     if (membresia != 0 && membresia != 1) {
         membresia = 0;
@@ -21,15 +19,9 @@ Usuario::Usuario(const string& nick, int memb, const string& city, const string&
 }
 
 Usuario::Usuario(const Usuario& otro)
-    : membresia(otro.membresia), ciudad(otro.ciudad), pais(otro.pais),
-    fechaInscripcion(otro.fechaInscripcion),
+    : nickname(otro.nickname), membresia(otro.membresia), ciudad(otro.ciudad),
+    pais(otro.pais), fechaInscripcion(otro.fechaInscripcion),
     ultimoMensajePublicitario(otro.ultimoMensajePublicitario) {
-
-    if (otro.nickname != nullptr) {
-        nickname = new string(*(otro.nickname));
-    } else {
-        nickname = nullptr;
-    }
 
     if (otro.listaFavoritos != nullptr) {
         listaFavoritos = new ListaReproduccion(*(otro.listaFavoritos));
@@ -39,11 +31,6 @@ Usuario::Usuario(const Usuario& otro)
 }
 
 Usuario::~Usuario() {
-    if (nickname != nullptr) {
-        delete nickname;
-        nickname = nullptr;
-    }
-
     if (listaFavoritos != nullptr) {
         delete listaFavoritos;
         listaFavoritos = nullptr;
@@ -125,7 +112,7 @@ void Usuario::actualizarUltimoMensaje(int idMensaje) {
 }
 
 string Usuario::getNickname() const {
-    return (nickname != nullptr) ? *nickname : "";
+    return nickname;
 }
 
 int Usuario::getMembresia() const {
@@ -154,11 +141,7 @@ string Usuario::getTipoMembresiaString() const {
 
 void Usuario::setNickname(const string& nick) {
     if (!nick.empty()) {
-        if (nickname == nullptr) {
-            nickname = new string(nick);
-        } else {
-            *nickname = nick;
-        }
+        nickname = nick;
     }
 }
 
@@ -172,19 +155,11 @@ void Usuario::setPais(const string& country) {
 
 Usuario& Usuario::operator=(const Usuario& otro) {
     if (this != &otro) {
-        if (nickname != nullptr) {
-            delete nickname;
-        }
         if (listaFavoritos != nullptr) {
             delete listaFavoritos;
         }
 
-        if (otro.nickname != nullptr) {
-            nickname = new string(*(otro.nickname));
-        } else {
-            nickname = nullptr;
-        }
-
+        nickname = otro.nickname;
         membresia = otro.membresia;
         ciudad = otro.ciudad;
         pais = otro.pais;
@@ -201,17 +176,11 @@ Usuario& Usuario::operator=(const Usuario& otro) {
 }
 
 bool Usuario::operator==(const Usuario& otro) const {
-    if (nickname == nullptr || otro.nickname == nullptr) {
-        return false;
-    }
-    return *nickname == *(otro.nickname);
+    return nickname == otro.nickname;
 }
 
 bool Usuario::operator==(const string& nick) const {
-    if (nickname == nullptr) {
-        return false;
-    }
-    return *nickname == nick;
+    return nickname == nick;
 }
 
 bool Usuario::operator!=(const Usuario& otro) const {
@@ -224,14 +193,10 @@ bool Usuario::operator<(const Usuario& otro) const {
 
 int Usuario::calcularMemoriaUsada() const {
     int total = sizeof(*this);
-
-    if (nickname != nullptr) {
-        total += sizeof(string) + nickname->capacity();
-    }
-
-    total += ciudad.capacity();
-    total += pais.capacity();
-    total += fechaInscripcion.capacity();
+    total += nickname.length();
+    total += ciudad.length();
+    total += pais.length();
+    total += fechaInscripcion.length();
 
     if (listaFavoritos != nullptr) {
         total += listaFavoritos->calcularMemoriaUsada();

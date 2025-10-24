@@ -7,7 +7,7 @@ using namespace std;
 
 class Usuario {
 private:
-    string* nickname;
+    string nickname;
     int membresia;
     string ciudad;
     string pais;

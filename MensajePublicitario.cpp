@@ -97,9 +97,8 @@ bool MensajePublicitario::operator==(const MensajePublicitario& otro) const {
     return contenido == otro.contenido && categoria == otro.categoria;
 }
 
-// Calcular memoria usada por esta instancia
 int MensajePublicitario::calcularMemoriaUsada() const {
-    int total = sizeof(*this);  // Tamaño base del objeto
-    total += contenido.capacity();  // Memoria del string
+    int total = sizeof(*this);
+    total += contenido.length();
     return total;
 }

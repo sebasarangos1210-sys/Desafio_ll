@@ -217,6 +217,10 @@ void Artista::setEdad(int nuevaEdad) {
     }
 }
 
+void Artista::setId(int nuevoId) {
+    id = nuevoId;
+}
+
 void Artista::setPaisOrigen(const string& pais) {
     if (!pais.empty()) {
         paisOrigen = pais;
@@ -304,7 +308,7 @@ Album* Artista::operator[](int indice) const {
 
 int Artista::calcularMemoriaUsada() const {
     int total = sizeof(*this);
-    total += paisOrigen.capacity();
+    total += paisOrigen.length();
 
     total += sizeof(Album*) * capacidadAlbumes;
 

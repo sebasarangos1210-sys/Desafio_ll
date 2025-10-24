@@ -6,7 +6,7 @@ using namespace std;
 
 class Credito {
 private:
-    string* nombres;
+    string nombres;
     string apellidos;
     string codigoAfiliacion;
     int tipoCredito;

@@ -1,78 +1,55 @@
 #include "Credito.h"
 #include <cctype>
 
-// Constructor por defecto
 Credito::Credito()
-    : nombres(nullptr), apellidos(""), codigoAfiliacion(""), tipoCredito(1) {
-    nombres = new string("");
+    : nombres(""), apellidos(""), codigoAfiliacion(""), tipoCredito(1) {
 }
 
-// Constructor parametrizado
 Credito::Credito(const string& nom, const string& apell, const string& codigo, int tipo)
-    : apellidos(apell), tipoCredito(tipo) {
-    nombres = new string(nom);
+    : nombres(nom), apellidos(apell), tipoCredito(tipo) {
 
-    // Validar y ajustar código de afiliación (debe tener 10 caracteres)
     if (validarCodigoAfiliacion(codigo)) {
         codigoAfiliacion = codigo;
     } else {
-        codigoAfiliacion = "0000000000"; // Código por defecto si no es válido
+        codigoAfiliacion = "0000000000";
     }
 
-    // Validar tipo de crédito (1, 2 o 3)
     if (tipoCredito < 1 || tipoCredito > 3) {
-        tipoCredito = 1; // Por defecto Productor
+        tipoCredito = 1;
     }
 }
 
-// Constructor de copia (IMPORTANTE por el uso de punteros)
 Credito::Credito(const Credito& otro)
-    : apellidos(otro.apellidos),
-    codigoAfiliacion(otro.codigoAfiliacion),
-    tipoCredito(otro.tipoCredito) {
-    // Copia profunda del puntero
-    if (otro.nombres != nullptr) {
-        nombres = new string(*(otro.nombres));
-    } else {
-        nombres = nullptr;
-    }
+    : nombres(otro.nombres), apellidos(otro.apellidos),
+    codigoAfiliacion(otro.codigoAfiliacion), tipoCredito(otro.tipoCredito) {
 }
 
-// Destructor
 Credito::~Credito() {
-    if (nombres != nullptr) {
-        delete nombres;
-        nombres = nullptr;
-    }
 }
 
-// Validar código de afiliación (10 caracteres)
 bool Credito::validarCodigoAfiliacion(const string& codigo) const {
     if (codigo.length() != 10) {
         return false;
     }
 
     for (size_t i = 0; i < codigo.length(); i++) {
-        if (!isalnum(codigo[i])) {  // No es alfanumérico
+        if (!isalnum(codigo[i])) {
             return false;
         }
     }
     return true;
 }
 
-// Validar que el crédito es válido
 bool Credito::esValido() const {
-    return nombres != nullptr &&
-           !nombres->empty() &&
+    return !nombres.empty() &&
            !apellidos.empty() &&
            validarCodigoAfiliacion(codigoAfiliacion) &&
            tipoCredito >= 1 &&
            tipoCredito <= 3;
 }
 
-// --- GETTERS ---
 string Credito::getNombres() const {
-    return (nombres != nullptr) ? *nombres : "";
+    return nombres;
 }
 
 string Credito::getApellidos() const {
@@ -88,10 +65,9 @@ int Credito::getTipoCredito() const {
 }
 
 string Credito::getNombreCompleto() const {
-    return getNombres() + " " + apellidos;
+    return nombres + " " + apellidos;
 }
 
-// Obtener tipo de crédito como string
 string Credito::getTipoCreditoString() const {
     switch(tipoCredito) {
     case 1: return "Productor";
@@ -101,13 +77,8 @@ string Credito::getTipoCreditoString() const {
     }
 }
 
-// --- SETTERS ---
 void Credito::setNombres(const string& nom) {
-    if (nombres == nullptr) {
-        nombres = new string(nom);
-    } else {
-        *nombres = nom;
-    }
+    nombres = nom;
 }
 
 void Credito::setApellidos(const string& apell) {
@@ -126,23 +97,9 @@ void Credito::setTipoCredito(int tipo) {
     }
 }
 
-// --- SOBRECARGA DE OPERADORES ---
-
-// Operador de asignación (CRÍTICO por punteros)
 Credito& Credito::operator=(const Credito& otro) {
-    if (this != &otro) {  // Evitar autoasignación
-        // Liberar memoria existente
-        if (nombres != nullptr) {
-            delete nombres;
-        }
-
-        // Copia profunda
-        if (otro.nombres != nullptr) {
-            nombres = new string(*(otro.nombres));
-        } else {
-            nombres = nullptr;
-        }
-
+    if (this != &otro) {
+        nombres = otro.nombres;
         apellidos = otro.apellidos;
         codigoAfiliacion = otro.codigoAfiliacion;
         tipoCredito = otro.tipoCredito;
@@ -150,28 +107,23 @@ Credito& Credito::operator=(const Credito& otro) {
     return *this;
 }
 
-// Comparar créditos por código de afiliación
 bool Credito::operator==(const Credito& otro) const {
     return codigoAfiliacion == otro.codigoAfiliacion;
 }
 
-// Operador diferente
 bool Credito::operator!=(const Credito& otro) const {
     return !(*this == otro);
 }
 
-// Ordenar por apellido (útil para ordenamiento)
 bool Credito::operator<(const Credito& otro) const {
     return apellidos < otro.apellidos;
 }
 
-// Calcular memoria usada por esta instancia
 int Credito::calcularMemoriaUsada() const {
-    int total = sizeof(*this);  // Tamaño base del objeto
+    int total = sizeof(*this);
     if (nombres != nullptr) {
-        total += sizeof(string) + nombres->capacity();
+        total += sizeof(string) + nombres->length();
     }
-    total += apellidos.capacity();
-    total += codigoAfiliacion.capacity();
+    total += apellidos.length();
+    total += codigoAfiliacion.length();
     return total;
-}

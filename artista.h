@@ -46,6 +46,7 @@ public:
     int getTotalCanciones() const;
 
     void setEdad(int nuevaEdad);
+    void setId(int nuevoId);
     void setPaisOrigen(const string& pais);
     void setPosicionTendencia(int posicion);
 

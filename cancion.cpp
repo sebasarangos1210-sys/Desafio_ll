@@ -156,6 +156,27 @@ Credito** Cancion::obtenerCreditosPorTipo(int tipo, int& cantidad) const {
     return resultado;
 }
 
+// Establecer un crédito en una posición específica
+void Cancion::setCredito(int indice, Credito* credito) {
+    if (indice < 0 || indice >= numCreditos || credito == nullptr) {
+        return;
+    }
+
+    if (creditos[indice] != nullptr) {
+        delete creditos[indice];
+    }
+
+    creditos[indice] = new Credito(*credito);
+}
+
+// Obtener un crédito por índice
+Credito* Cancion::getCredito(int indice) const {
+    if (indice >= 0 && indice < numCreditos) {
+        return creditos[indice];
+    }
+    return nullptr;
+}
+
 // Extraer ID del artista (primeros 5 dígitos)
 int Cancion::extraerIdArtista() const {
     return id / 10000;  // Divide entre 10^4 para obtener primeros 5 dígitos
@@ -229,6 +250,10 @@ string Cancion::getDuracionFormateada() const {
 }
 
 // --- SETTERS ---
+void Cancion::setId(int nuevoId) {
+    id = nuevoId;
+}
+
 void Cancion::setNombre(const string& nom) {
     nombre = nom;
 }
@@ -305,11 +330,10 @@ bool Cancion::operator>(const Cancion& otra) const {
     return vecesReproducida > otra.vecesReproducida;
 }
 
-// Calcular memoria usada
 int Cancion::calcularMemoriaUsada() const {
     int total = sizeof(*this);
-    total += nombre.capacity();
-    total += ubicacionArchivo.capacity();
+    total += nombre.length();
+    total += ubicacionArchivo.length();
 
     // Memoria del arreglo de créditos
     total += sizeof(Credito*) * capacidadCreditos;
