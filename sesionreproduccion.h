@@ -1,61 +1,65 @@
-#ifndef LISTAREPRODUCCION_H
-#define LISTAREPRODUCCION_H
+#ifndef SESIONREPRODUCCION_H
+#define SESIONREPRODUCCION_H
 
+#include "Usuario.h"
 #include "Cancion.h"
+#include "FuenteAleatoria.h"
 
-class ListaReproduccion {
+// evitar dependencia circular
+class FuenteListaFavoritos;
+
+class SesionReproduccion {
 private:
-    Cancion** canciones;
-    int numCanciones;
-    int capacidadMaxima;
-    int indiceActual;
-    bool modoAleatorio;
-    bool modoRepetir;
-    int* historial;
-    int tamHistorial;
+    Usuario* usuario;
+    Cancion* cancionActual;
+    Cancion** listaReproduccion;
+    int cantidadLista;
+    int capacidadLista;
+    Cancion** historial;
+    int cantidadHistorial;
     int capacidadHistorial;
+    int indiceActual;
+    bool repetir;
+    bool enReproduccion;
+    bool modoAleatorio;
+    int contadorCanciones;
+    FuenteAleatoria* fuenteAleatoria;
+    FuenteListaFavoritos* fuenteFavoritos;
 
-    void redimensionarCanciones();
+    void redimensionarLista();
     void redimensionarHistorial();
-    int generarIndiceAleatorio() const;
-    void agregarAlHistorial(int indice);
+    void agregarAlHistorial(Cancion* cancion);
 
 public:
-    ListaReproduccion();
-    ListaReproduccion(int capacidadMax);
-    ListaReproduccion(const ListaReproduccion& otra);
-    ~ListaReproduccion();
+    SesionReproduccion();
+    SesionReproduccion(Usuario* user);
+    ~SesionReproduccion();
 
-    bool agregarCancion(Cancion* cancion);
-    bool eliminarCancion(int idCancion);
-    Cancion* buscarCancion(int idCancion) const;
-    bool contieneCancion(int idCancion) const;
+    void iniciar();
+    void detener();
+    bool siguiente();
+    bool anterior();
 
-    Cancion* obtenerCancionActual() const;
-    Cancion* siguienteCancion();
-    Cancion* cancionPrevia(int maxRetroceso);
-    void reiniciarReproduccion();
+    void establecerFuenteAleatoria(FuenteAleatoria* fuente);
+    void establecerFuenteFavoritos(FuenteListaFavoritos* fuente);
 
-    void activarModoAleatorio(bool activar);
-    void activarModoRepetir(bool activar);
+    bool agregarALista(Cancion* cancion);
+    void mostrarInterfaz();
+    void manejarPublicidad();
+    bool puedeRetroceder();
+    bool haySiguiente();
+
+    // Getters
+    Usuario* getUsuario() const;
+    Cancion* getCancionActual() const;
+    bool estaEnReproduccion() const;
     bool esModoAleatorio() const;
     bool esModoRepetir() const;
+    int getContadorCanciones() const;
 
-    void limpiarHistorial();
-    int* obtenerHistorial(int& tamanio) const;
-
-    int getNumCanciones() const;
-    int getCapacidadMaxima() const;
-    int getIndiceActual() const;
-    bool estaLlena() const;
-    bool estaVacia() const;
-
-    ListaReproduccion& operator=(const ListaReproduccion& otra);
-    ListaReproduccion& operator+=(Cancion* cancion);
-    ListaReproduccion& operator+=(const ListaReproduccion& otra);
-    ListaReproduccion& operator-=(int idCancion);
-    bool operator==(const ListaReproduccion& otra) const;
-    Cancion* operator[](int indice) const;
+    // Setters
+    void setModoAleatorio(bool activar);
+    void setModoRepetir(bool activar);
 
     int calcularMemoriaUsada() const;
 };

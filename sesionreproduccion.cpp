@@ -1,65 +1,61 @@
-#include "ListaReproduccion.h"
-#include <cstdlib>
-#include <ctime>
+#include "SesionReproduccion.h"
+#include <iostream>
+using namespace std;
 
-ListaReproduccion::ListaReproduccion()
-    : canciones(nullptr), numCanciones(0), capacidadMaxima(10000),
-    indiceActual(0), modoAleatorio(false), modoRepetir(false),
-    historial(nullptr), tamHistorial(0), capacidadHistorial(10) {
-    canciones = new Cancion*[capacidadMaxima];
-    for (int i = 0; i < capacidadMaxima; i++) {
-        canciones[i] = nullptr;
-    }
+// Generador de números pseudoaleatorios simple
+static unsigned int semilla_sesion = 987654321;
 
-    historial = new int[capacidadHistorial];
-    srand(time(0));
+static void inicializarSemillaSesion() {
+    semilla_sesion = (unsigned int)(long long)&semilla_sesion;
 }
 
-ListaReproduccion::ListaReproduccion(int capacidadMax)
-    : canciones(nullptr), numCanciones(0), capacidadMaxima(capacidadMax),
-    indiceActual(0), modoAleatorio(false), modoRepetir(false),
-    historial(nullptr), tamHistorial(0), capacidadHistorial(10) {
-    if (capacidadMaxima <= 0) {
-        capacidadMaxima = 10000;
-    }
-
-    canciones = new Cancion*[capacidadMaxima];
-    for (int i = 0; i < capacidadMaxima; i++) {
-        canciones[i] = nullptr;
-    }
-
-    historial = new int[capacidadHistorial];
-    srand(time(0));
+static int generarAleatorioSesion(int max) {
+    semilla_sesion = semilla_sesion * 1103515245 + 12345;
+    return (semilla_sesion / 65536) % max;
 }
 
-ListaReproduccion::ListaReproduccion(const ListaReproduccion& otra)
-    : numCanciones(otra.numCanciones), capacidadMaxima(otra.capacidadMaxima),
-    indiceActual(otra.indiceActual), modoAleatorio(otra.modoAleatorio),
-    modoRepetir(otra.modoRepetir), tamHistorial(otra.tamHistorial),
-    capacidadHistorial(otra.capacidadHistorial) {
+SesionReproduccion::SesionReproduccion()
+    : usuario(nullptr), cancionActual(nullptr), listaReproduccion(nullptr),
+    cantidadLista(0), capacidadLista(100), historial(nullptr),
+    cantidadHistorial(0), capacidadHistorial(50), indiceActual(0),
+    repetir(false), enReproduccion(false), modoAleatorio(false),
+    contadorCanciones(0), fuenteAleatoria(nullptr), fuenteFavoritos(nullptr) {
 
-    canciones = new Cancion*[capacidadMaxima];
-    for (int i = 0; i < numCanciones; i++) {
-        if (otra.canciones[i] != nullptr) {
-            canciones[i] = otra.canciones[i];
-        } else {
-            canciones[i] = nullptr;
-        }
-    }
-    for (int i = numCanciones; i < capacidadMaxima; i++) {
-        canciones[i] = nullptr;
+    listaReproduccion = new Cancion*[capacidadLista];
+    for (int i = 0; i < capacidadLista; i++) {
+        listaReproduccion[i] = nullptr;
     }
 
-    historial = new int[capacidadHistorial];
-    for (int i = 0; i < tamHistorial; i++) {
-        historial[i] = otra.historial[i];
+    historial = new Cancion*[capacidadHistorial];
+    for (int i = 0; i < capacidadHistorial; i++) {
+        historial[i] = nullptr;
     }
+    inicializarSemillaSesion();
 }
 
-ListaReproduccion::~ListaReproduccion() {
-    if (canciones != nullptr) {
-        delete[] canciones;
-        canciones = nullptr;
+SesionReproduccion::SesionReproduccion(Usuario* user)
+    : usuario(user), cancionActual(nullptr), listaReproduccion(nullptr),
+    cantidadLista(0), capacidadLista(100), historial(nullptr),
+    cantidadHistorial(0), capacidadHistorial(50), indiceActual(0),
+    repetir(false), enReproduccion(false), modoAleatorio(false),
+    contadorCanciones(0), fuenteAleatoria(nullptr), fuenteFavoritos(nullptr) {
+
+    listaReproduccion = new Cancion*[capacidadLista];
+    for (int i = 0; i < capacidadLista; i++) {
+        listaReproduccion[i] = nullptr;
+    }
+
+    historial = new Cancion*[capacidadHistorial];
+    for (int i = 0; i < capacidadHistorial; i++) {
+        historial[i] = nullptr;
+    }
+    inicializarSemillaSesion();
+}
+
+SesionReproduccion::~SesionReproduccion() {
+    if (listaReproduccion != nullptr) {
+        delete[] listaReproduccion;
+        listaReproduccion = nullptr;
     }
 
     if (historial != nullptr) {
@@ -68,292 +64,303 @@ ListaReproduccion::~ListaReproduccion() {
     }
 }
 
-void ListaReproduccion::redimensionarCanciones() {
-    int nuevaCapacidad = capacidadMaxima * 2;
-    if (nuevaCapacidad > 10000) {
-        nuevaCapacidad = 10000;
-    }
-
+void SesionReproduccion::redimensionarLista() {
+    int nuevaCapacidad = capacidadLista * 2;
     Cancion** nuevoArreglo = new Cancion*[nuevaCapacidad];
 
-    for (int i = 0; i < numCanciones; i++) {
-        nuevoArreglo[i] = canciones[i];
+    for (int i = 0; i < cantidadLista; i++) {
+        nuevoArreglo[i] = listaReproduccion[i];
     }
 
-    for (int i = numCanciones; i < nuevaCapacidad; i++) {
+    for (int i = cantidadLista; i < nuevaCapacidad; i++) {
         nuevoArreglo[i] = nullptr;
     }
 
-    delete[] canciones;
-    canciones = nuevoArreglo;
-    capacidadMaxima = nuevaCapacidad;
+    delete[] listaReproduccion;
+    listaReproduccion = nuevoArreglo;
+    capacidadLista = nuevaCapacidad;
 }
 
-void ListaReproduccion::redimensionarHistorial() {
+void SesionReproduccion::redimensionarHistorial() {
     int nuevaCapacidad = capacidadHistorial * 2;
-    int* nuevoHistorial = new int[nuevaCapacidad];
+    Cancion** nuevoArreglo = new Cancion*[nuevaCapacidad];
 
-    for (int i = 0; i < tamHistorial; i++) {
-        nuevoHistorial[i] = historial[i];
+    for (int i = 0; i < cantidadHistorial; i++) {
+        nuevoArreglo[i] = historial[i];
+    }
+
+    for (int i = cantidadHistorial; i < nuevaCapacidad; i++) {
+        nuevoArreglo[i] = nullptr;
     }
 
     delete[] historial;
-    historial = nuevoHistorial;
+    historial = nuevoArreglo;
     capacidadHistorial = nuevaCapacidad;
 }
 
-int ListaReproduccion::generarIndiceAleatorio() const {
-    if (numCanciones == 0) return -1;
-    return rand() % numCanciones;
-}
+void SesionReproduccion::agregarAlHistorial(Cancion* cancion) {
+    if (cancion == nullptr) return;
 
-void ListaReproduccion::agregarAlHistorial(int indice) {
-    if (modoRepetir && tamHistorial > 0 && historial[tamHistorial - 1] == indice) {
+    // Si está en modo repetir, no agregar la misma canción múltiples veces
+    if (repetir && cantidadHistorial > 0 && historial[cantidadHistorial - 1] == cancion) {
         return;
     }
 
-    if (tamHistorial >= capacidadHistorial) {
+    if (cantidadHistorial >= capacidadHistorial) {
         redimensionarHistorial();
     }
 
-    historial[tamHistorial] = indice;
-    tamHistorial++;
+    historial[cantidadHistorial] = cancion;
+    cantidadHistorial++;
 }
 
-bool ListaReproduccion::agregarCancion(Cancion* cancion) {
-    if (cancion == nullptr || numCanciones >= capacidadMaxima) {
+void SesionReproduccion::iniciar() {
+    if (cantidadLista == 0 && fuenteAleatoria == nullptr && fuenteFavoritos == nullptr) {
+        cout << "No hay canciones para reproducir.\n";
+        return;
+    }
+
+    enReproduccion = true;
+    indiceActual = 0;
+    contadorCanciones = 0;
+
+    cout << "REPRODUCCION INICIADA\n";
+    if (usuario != nullptr) {
+        cout << "Usuario: " << usuario->getNickname() << "\n";
+        cout << "Tipo: " << usuario->getTipoMembresiaString() << "\n";
+    }
+    cout << "Modo: " << (modoAleatorio ? "Aleatorio" : "Secuencial") << "\n";
+    cout << "Repetir: " << (repetir ? "Activado" : "Desactivado") << "\n\n";
+}
+
+void SesionReproduccion::detener() {
+    enReproduccion = false;
+    cancionActual = nullptr;
+
+    cout << "\nREPRODUCCION DETENIDA\n";
+    cout << "Canciones reproducidas: " << contadorCanciones << "\n";
+}
+
+bool SesionReproduccion::siguiente() {
+    if (!enReproduccion) {
+        cout << "La reproduccion no esta activa. Use iniciar() primero.\n";
         return false;
     }
 
-    if (contieneCancion(cancion->getId())) {
-        return false;
+    // Si está en modo repetir, devolver la misma canción
+    if (repetir && cancionActual != nullptr) {
+        agregarAlHistorial(cancionActual);
+        return true;
     }
 
-    if (numCanciones >= capacidadMaxima && capacidadMaxima < 10000) {
-        redimensionarCanciones();
-    }
+    // Obtener siguiente canción según la fuente
+    Cancion* siguienteCancion = nullptr;
 
-    canciones[numCanciones] = cancion;
-    numCanciones++;
-    return true;
-}
-
-bool ListaReproduccion::eliminarCancion(int idCancion) {
-    for (int i = 0; i < numCanciones; i++) {
-        if (canciones[i] != nullptr && canciones[i]->getId() == idCancion) {
-            for (int j = i; j < numCanciones - 1; j++) {
-                canciones[j] = canciones[j + 1];
+    if (fuenteAleatoria != nullptr) {
+        // Usar fuente aleatoria (todas las canciones del sistema)
+        siguienteCancion = fuenteAleatoria->siguienteCancion();
+    } else if (fuenteFavoritos != nullptr) {
+        // Usar fuente de favoritos
+        // Implementar cuando tengas FuenteListaFavoritos
+    } else if (cantidadLista > 0) {
+        // Usar lista interna
+        if (modoAleatorio) {
+            indiceActual = generarAleatorioSesion(cantidadLista);
+        } else {
+            indiceActual++;
+            if (indiceActual >= cantidadLista) {
+                indiceActual = 0; // Volver al inicio
             }
-            canciones[numCanciones - 1] = nullptr;
-            numCanciones--;
-
-            if (indiceActual >= numCanciones && numCanciones > 0) {
-                indiceActual = numCanciones - 1;
-            }
-
-            return true;
         }
+        siguienteCancion = listaReproduccion[indiceActual];
     }
+
+    if (siguienteCancion != nullptr) {
+        cancionActual = siguienteCancion;
+        agregarAlHistorial(cancionActual);
+        contadorCanciones++;
+
+        // Manejar publicidad si es usuario estándar
+        if (usuario != nullptr && !usuario->esPremium() && contadorCanciones % 2 == 0) {
+            manejarPublicidad();
+        }
+
+        mostrarInterfaz();
+        return true;
+    }
+
     return false;
 }
 
-Cancion* ListaReproduccion::buscarCancion(int idCancion) const {
-    for (int i = 0; i < numCanciones; i++) {
-        if (canciones[i] != nullptr && canciones[i]->getId() == idCancion) {
-            return canciones[i];
-        }
-    }
-    return nullptr;
-}
-
-bool ListaReproduccion::contieneCancion(int idCancion) const {
-    return buscarCancion(idCancion) != nullptr;
-}
-
-Cancion* ListaReproduccion::obtenerCancionActual() const {
-    if (numCanciones == 0 || indiceActual < 0 || indiceActual >= numCanciones) {
-        return nullptr;
-    }
-    return canciones[indiceActual];
-}
-
-Cancion* ListaReproduccion::siguienteCancion() {
-    if (numCanciones == 0) {
-        return nullptr;
-    }
-
-    if (modoRepetir) {
-        agregarAlHistorial(indiceActual);
-        return canciones[indiceActual];
-    }
-
-    if (modoAleatorio) {
-        indiceActual = generarIndiceAleatorio();
-    } else {
-        indiceActual++;
-        if (indiceActual >= numCanciones) {
-            indiceActual = 0;
-        }
-    }
-
-    agregarAlHistorial(indiceActual);
-    return canciones[indiceActual];
-}
-
-Cancion* ListaReproduccion::cancionPrevia(int maxRetroceso) {
-    if (numCanciones == 0 || tamHistorial <= 1) {
-        return nullptr;
-    }
-
-    int retrocesos = (tamHistorial > maxRetroceso) ? maxRetroceso : tamHistorial - 1;
-
-    if (retrocesos > 0) {
-        tamHistorial -= retrocesos;
-        indiceActual = historial[tamHistorial - 1];
-        return canciones[indiceActual];
-    }
-
-    return nullptr;
-}
-
-void ListaReproduccion::reiniciarReproduccion() {
-    indiceActual = 0;
-    limpiarHistorial();
-}
-
-void ListaReproduccion::activarModoAleatorio(bool activar) {
-    modoAleatorio = activar;
-}
-
-void ListaReproduccion::activarModoRepetir(bool activar) {
-    modoRepetir = activar;
-}
-
-bool ListaReproduccion::esModoAleatorio() const {
-    return modoAleatorio;
-}
-
-bool ListaReproduccion::esModoRepetir() const {
-    return modoRepetir;
-}
-
-void ListaReproduccion::limpiarHistorial() {
-    tamHistorial = 0;
-}
-
-int* ListaReproduccion::obtenerHistorial(int& tamanio) const {
-    tamanio = tamHistorial;
-    if (tamHistorial == 0) {
-        return nullptr;
-    }
-
-    int* copia = new int[tamHistorial];
-    for (int i = 0; i < tamHistorial; i++) {
-        copia[i] = historial[i];
-    }
-    return copia;
-}
-
-int ListaReproduccion::getNumCanciones() const {
-    return numCanciones;
-}
-
-int ListaReproduccion::getCapacidadMaxima() const {
-    return capacidadMaxima;
-}
-
-int ListaReproduccion::getIndiceActual() const {
-    return indiceActual;
-}
-
-bool ListaReproduccion::estaLlena() const {
-    return numCanciones >= capacidadMaxima;
-}
-
-bool ListaReproduccion::estaVacia() const {
-    return numCanciones == 0;
-}
-
-ListaReproduccion& ListaReproduccion::operator=(const ListaReproduccion& otra) {
-    if (this != &otra) {
-        if (canciones != nullptr) {
-            delete[] canciones;
-        }
-        if (historial != nullptr) {
-            delete[] historial;
-        }
-
-        numCanciones = otra.numCanciones;
-        capacidadMaxima = otra.capacidadMaxima;
-        indiceActual = otra.indiceActual;
-        modoAleatorio = otra.modoAleatorio;
-        modoRepetir = otra.modoRepetir;
-        tamHistorial = otra.tamHistorial;
-        capacidadHistorial = otra.capacidadHistorial;
-
-        canciones = new Cancion*[capacidadMaxima];
-        for (int i = 0; i < numCanciones; i++) {
-            canciones[i] = otra.canciones[i];
-        }
-        for (int i = numCanciones; i < capacidadMaxima; i++) {
-            canciones[i] = nullptr;
-        }
-
-        historial = new int[capacidadHistorial];
-        for (int i = 0; i < tamHistorial; i++) {
-            historial[i] = otra.historial[i];
-        }
-    }
-    return *this;
-}
-
-ListaReproduccion& ListaReproduccion::operator+=(Cancion* cancion) {
-    agregarCancion(cancion);
-    return *this;
-}
-
-ListaReproduccion& ListaReproduccion::operator+=(const ListaReproduccion& otra) {
-    for (int i = 0; i < otra.numCanciones; i++) {
-        if (otra.canciones[i] != nullptr) {
-            agregarCancion(otra.canciones[i]);
-        }
-    }
-    return *this;
-}
-
-ListaReproduccion& ListaReproduccion::operator-=(int idCancion) {
-    eliminarCancion(idCancion);
-    return *this;
-}
-
-bool ListaReproduccion::operator==(const ListaReproduccion& otra) const {
-    if (numCanciones != otra.numCanciones) {
+bool SesionReproduccion::anterior() {
+    if (!enReproduccion) {
+        cout << "La reproduccion no esta activa.\n";
         return false;
     }
 
-    for (int i = 0; i < numCanciones; i++) {
-        if (canciones[i] == nullptr || otra.canciones[i] == nullptr) {
-            if (canciones[i] != otra.canciones[i]) {
-                return false;
-            }
-        } else if (*canciones[i] != *otra.canciones[i]) {
-            return false;
+    if (!puedeRetroceder()) {
+        cout << "No se puede retroceder mas.\n";
+        return false;
+    }
+
+    // Determinar límite de retroceso según usuario
+    int maxRetroceso = 4; // Por defecto para aleatorio
+    if (fuenteFavoritos != nullptr) {
+        maxRetroceso = 6; // Para favoritos
+    }
+
+    if (cantidadHistorial > 1) {
+        // Retroceder en el historial
+        cantidadHistorial--;
+        cancionActual = historial[cantidadHistorial - 1];
+
+        mostrarInterfaz();
+        return true;
+    }
+
+    return false;
+}
+
+void SesionReproduccion::establecerFuenteAleatoria(FuenteAleatoria* fuente) {
+    fuenteAleatoria = fuente;
+    fuenteFavoritos = nullptr; // Desactivar favoritos si se establece aleatoria
+}
+
+void SesionReproduccion::establecerFuenteFavoritos(FuenteListaFavoritos* fuente) {
+    fuenteFavoritos = fuente;
+    fuenteAleatoria = nullptr; // Desactivar aleatoria si se establece favoritos
+}
+
+bool SesionReproduccion::agregarALista(Cancion* cancion) {
+    if (cancion == nullptr) return false;
+
+    // Verificar duplicados
+    for (int i = 0; i < cantidadLista; i++) {
+        if (listaReproduccion[i] == cancion) {
+            return false; // Ya existe
         }
     }
 
+    if (cantidadLista >= capacidadLista) {
+        redimensionarLista();
+    }
+
+    listaReproduccion[cantidadLista] = cancion;
+    cantidadLista++;
     return true;
 }
 
-Cancion* ListaReproduccion::operator[](int indice) const {
-    if (indice >= 0 && indice < numCanciones) {
-        return canciones[indice];
+void SesionReproduccion::mostrarInterfaz() {
+    if (cancionActual == nullptr) return;
+
+    cout << "\n----------------------------------------\n";
+    cout << "Reproduciendo: " << cancionActual->getNombre() << "\n";
+    cout << "Duracion: " << cancionActual->getDuracionFormateada() << "\n";
+
+    if (usuario != nullptr) {
+        int calidad = usuario->obtenerCalidadAudio();
+        cout << "Calidad: " << calidad << " kbps\n";
+        cout << "Audio: " << cancionActual->obtenerRutaAudio(calidad) << "\n";
     }
-    return nullptr;
+
+    cout << "Contador: " << contadorCanciones << "\n";
+    cout << "----------------------------------------\n";
+
+    if (usuario != nullptr && usuario->esPremium()) {
+        cout << "[OPCIONES] Siguiente | Anterior | Repetir | Detener\n";
+    } else {
+        cout << "[OPCIONES] Siguiente | Detener\n";
+    }
+    cout << "\n";
 }
 
-int ListaReproduccion::calcularMemoriaUsada() const {
+void SesionReproduccion::manejarPublicidad() {
+    cout << "*          PUBLICIDAD                  *\n";
+    cout << "* Disfruta UdeATunes Premium          *\n";
+    cout << "* Sin anuncios, calidad 777 kbps       *\n";
+    cout << "* Solo 19,900 COP/mes                  *\n";
+
+}
+
+bool SesionReproduccion::puedeRetroceder() {
+    if (usuario == nullptr || !usuario->esPremium()) {
+        return false; // Solo premium puede retroceder
+    }
+
+    int maxRetroceso = 4;
+    if (fuenteFavoritos != nullptr) {
+        maxRetroceso = 6;
+    }
+
+    return cantidadHistorial > 1 && cantidadHistorial <= maxRetroceso + 1;
+}
+
+bool SesionReproduccion::haySiguiente() {
+    if (repetir) return true; // En modo repetir siempre hay siguiente
+
+    if (fuenteAleatoria != nullptr) {
+        return fuenteAleatoria->haySiguiente();
+    }
+
+    if (fuenteFavoritos != nullptr) {
+        // return fuenteFavoritos->haySiguiente();
+        return true; // Temporal hasta implementar FuenteListaFavoritos
+    }
+
+    return cantidadLista > 0;
+}
+
+// --- GETTERS ---
+Usuario* SesionReproduccion::getUsuario() const {
+    return usuario;
+}
+
+Cancion* SesionReproduccion::getCancionActual() const {
+    return cancionActual;
+}
+
+bool SesionReproduccion::estaEnReproduccion() const {
+    return enReproduccion;
+}
+
+bool SesionReproduccion::esModoAleatorio() const {
+    return modoAleatorio;
+}
+
+bool SesionReproduccion::esModoRepetir() const {
+    return repetir;
+}
+
+int SesionReproduccion::getContadorCanciones() const {
+    return contadorCanciones;
+}
+
+// --- SETTERS ---
+void SesionReproduccion::setModoAleatorio(bool activar) {
+    modoAleatorio = activar;
+}
+
+void SesionReproduccion::setModoRepetir(bool activar) {
+    repetir = activar;
+}
+
+int SesionReproduccion::calcularMemoriaUsada() const {
     int total = sizeof(*this);
-    total += sizeof(Cancion*) * capacidadMaxima;
-    total += sizeof(int) * capacidadHistorial;
+
+    // Memoria de la lista de reproducción
+    total += sizeof(Cancion*) * capacidadLista;
+
+    // Memoria del historial
+    total += sizeof(Cancion*) * capacidadHistorial;
+
+    // Memoria de las fuentes
+    if (fuenteAleatoria != nullptr) {
+        total += fuenteAleatoria->calcularMemoriaUsada();
+    }
+
+    if (fuenteFavoritos != nullptr) {
+        total += fuenteFavoritos->calcularMemoriaUsada();
+    }
+
     return total;
 }
