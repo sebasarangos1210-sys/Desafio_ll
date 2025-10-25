@@ -233,6 +233,12 @@ void Artista::setPosicionTendencia(int posicion) {
     }
 }
 
+void Artista::setSeguidores(int numSeguidores) {
+    if (numSeguidores >= 0) {
+        seguidores = numSeguidores;
+    }
+}
+
 Artista& Artista::operator=(const Artista& otro) {
     if (this != &otro) {
         if (albumes != nullptr) {
@@ -308,7 +314,7 @@ Album* Artista::operator[](int indice) const {
 
 int Artista::calcularMemoriaUsada() const {
     int total = sizeof(*this);
-    total += paisOrigen.length();
+    total += paisOrigen.capacity();
 
     total += sizeof(Album*) * capacidadAlbumes;
 

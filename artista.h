@@ -49,6 +49,7 @@ public:
     void setId(int nuevoId);
     void setPaisOrigen(const string& pais);
     void setPosicionTendencia(int posicion);
+    void setSeguidores(int numSeguidores);
 
     Artista& operator=(const Artista& otro);
     bool operator==(const Artista& otro) const;
