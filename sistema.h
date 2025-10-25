@@ -1,16 +1,15 @@
 #ifndef SISTEMA_H
 #define SISTEMA_H
 
-#include <string>
-#include  "cancion.h"
 #include "MensajePublicitario.h"
 #include "album.h"
-#include "usuarios.h"
+#include "usuario.h"
 #include "reproduccion.h"
 
 using namespace std;
 
 class Sistema {
+
     public:
         Sistema(); //Constructor
         usuario* Login(const string& Nickname); //Metodo de ingreso al Sistema
