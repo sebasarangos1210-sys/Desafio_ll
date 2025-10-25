@@ -2,7 +2,9 @@
 #define SISTEMA_H
 
 #include "MensajePublicitario.h"
+#include <string>
 #include "album.h"
+#include "artista.h"
 #include "usuario.h"
 #include "reproduccion.h"
 
@@ -12,38 +14,36 @@ class Sistema {
 
     public:
         Sistema(); //Constructor
-        usuario* Login(const string& Nickname); //Metodo de ingreso al Sistema
+        Usuario* Login(const string& Nickname); //Metodo de ingreso al Sistema
         void Log_out(); //Metodo de Salir del Sistema
         //void R_musica(); // Metodo para Modelar la Reproduccion Musical
         void CargarDatos(); //Carga los Datos al Sistema
-        bool ComprobarMemb(const usuario& usuario); //Verifica la Membresia del Usuario
+        bool ComprobarMemb(const Usuario* usuarioactual); //Verifica la Membresia del Usuario
         //void interaccion(); //Modela las Operaciones Premium
         void salida_pant(); //Imprime en Pantalla la Consola de Reproducción
-        usuario* getusuarios() const; //Permite obtener el valor dedl Arreglo de Usuarios
-        void setusuarios(usuario& Usuario); //Ingresa la Informacion al Arreglo de Usuarios
-        album* getalbumes() const;
-        void setalbumes(album& Album); //Ingresa la Informacion al Arreglo de Albumes
-        artista* getartistas() const;
-        void setartista(artista Artista); //Ingresa la Informacion al Arreglo de Artistas
-        cancion* getCanciones() const;
-        void setCanciones(cancion Cancion); //Ingresa la Informacion al Arreglo de Canciones
+        Usuario* getusuarios() const; //Permite obtener el valor dedl Arreglo de Usuarios
+        void setusuarios(Usuario& Usuario); //Ingresa la Informacion al Arreglo de Usuarios
+        Album* getalbumes() const;
+        void setalbumes(Album& Album); //Ingresa la Informacion al Arreglo de Albumes
+        Artista* getartistas() const;
+        void setartista(Artista Artista); //Ingresa la Informacion al Arreglo de Artistas
+        Cancion* getCanciones() const;
+        void setCanciones(Cancion Cancion); //Ingresa la Informacion al Arreglo de Canciones
         MensajePublicitario* getMessage() const;
         void setMessage(MensajePublicitario Mensaje); //Ingresa la Informacion al Arreglo de Mensajes Publicitarios
-        cancion* getR_Canciones() const;
-        void setR_Canciones(cancion Cancion); //Ingresa la Informacion al Arreglo de Canciones Reproducidas
+        Cancion* getR_Canciones() const;
+        void setR_Canciones(Cancion Cancion); //Ingresa la Informacion al Arreglo de Canciones Reproducidas
         ~Sistema(); //Destructor
 
     private:
-        static int iterador;
-        usuario** usuarios;
+        Usuario** usuarios;
         int tamusuarios;
-        usuario* usuarioactual;
-        album** albumes;
-        artista** artistas;
-        cancion** canciones;
+        Usuario** usuarioactual;
+        Album** albumes;
+        Artista** artistas;
+        Cancion** canciones;
         MensajePublicitario* Mensajes;
-        cancion** reproducidas;
-        int tamreproducidas;
+        Cancion** reproducidas;
 };
 
 #endif // SISTEMA_H
