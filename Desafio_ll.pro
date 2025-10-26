@@ -11,8 +11,6 @@ SOURCES += \
         cancion.cpp \
         clases_credito_mensajepublicitario.cpp \
         credito.cpp \
-        fuentealeatoria.cpp \
-        fuentelistafavoritos.cpp \
         fuentereproduccion.cpp \
         sesionreproduccion.cpp \
         usuario.cpp
@@ -23,8 +21,6 @@ HEADERS += \
     artista.h \
     cancion.h \
     credito.h \
-    fuentealeatoria.h \
-    fuentelistafavoritos.h \
     fuentereproduccion.h \
     sesionreproduccion.h \
     usuario.h
