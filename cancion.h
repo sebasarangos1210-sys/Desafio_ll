@@ -55,7 +55,9 @@ public:
     string getUbicacionArchivo() const;
     int getNumCreditos() const;
     int getVecesReproducida() const;
-    string getDuracionFormateada() const;  // Retorna formato MM:SS
+    string getDuracionFormateada() const;
+    int getCapacidadCreditos() const;
+    // Retorna formato MM:SS
 
     // Setters
     void setId(int nuevoId);

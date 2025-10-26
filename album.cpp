@@ -260,25 +260,19 @@ string Album::getDuracionFormateada() const {
 }
 
 string* Album::getGeneros() const {
-    if (numGeneros == 0) {
-        return nullptr;
-    }
-    string* copia = new string[numGeneros];
-    for (int i = 0; i < numGeneros; i++) {
-        copia[i] = generos[i];
-    }
-    return copia;
+    return generos;
+}
+
+int Album::getCapacidadGeneros() const {
+    return capacidadGeneros;
 }
 
 Cancion** Album::getCanciones() const {
-    if (numCanciones == 0) {
-        return nullptr;
-    }
-    Cancion** copia = new Cancion*[numCanciones];
-    for (int i = 0; i < numCanciones; i++) {
-        copia[i] = canciones[i];
-    }
-    return copia;
+    return canciones;
+}
+
+int Album::getCapacidadCanciones() const {
+    return capacidadCanciones;
 }
 
 void Album::setNombre(const string& nom) {

@@ -14,7 +14,7 @@ Usuario::Usuario(const string& nick, int memb, const string& city, const string&
     }
 
     if (esPremium()) {
-        listaFavoritos = new sesionreproduccion(10000);
+        listaFavoritos = new ListaReproduccion(10000);
     }
 }
 
@@ -24,7 +24,7 @@ Usuario::Usuario(const Usuario& otro)
     ultimoMensajePublicitario(otro.ultimoMensajePublicitario) {
 
     if (otro.listaFavoritos != nullptr) {
-        listaFavoritos = new sesionreproduccion(*(otro.listaFavoritos));
+        listaFavoritos = new ListaReproduccion(*(otro.listaFavoritos));
     } else {
         listaFavoritos = nullptr;
     }
@@ -71,10 +71,10 @@ bool Usuario::seguirListaFavoritos(Usuario* otroUsuario) {
     }
 
     if (listaFavoritos == nullptr) {
-        listaFavoritos = new sesionreproduccion(10000);
+        listaFavoritos = new ListaReproduccion(10000);
     }
 
-    sesionreproduccion* otraLista = otroUsuario->obtenerListaFavoritos();
+    ListaReproduccion* otraLista = otroUsuario->obtenerListaFavoritos();
     if (otraLista == nullptr) {
         return false;
     }
@@ -83,7 +83,7 @@ bool Usuario::seguirListaFavoritos(Usuario* otroUsuario) {
     return true;
 }
 
-sesionreproduccion* Usuario::obtenerListaFavoritos() const {
+ListaReproduccion* Usuario::obtenerListaFavoritos() const {
     return listaFavoritos;
 }
 
@@ -97,7 +97,7 @@ void Usuario::cambiarMembresia(int nuevoTipo) {
 
     if (anteriorMembresia == 0 && nuevoTipo == 1) {
         if (listaFavoritos == nullptr) {
-            listaFavoritos = new sesionreproduccion(10000);
+            listaFavoritos = new ListaReproduccion(10000);
         }
     } else if (anteriorMembresia == 1 && nuevoTipo == 0) {
         if (listaFavoritos != nullptr) {
@@ -153,6 +153,16 @@ void Usuario::setPais(const string& country) {
     pais = country;
 }
 
+void Usuario::setMembresia(int tipo) {
+    if (tipo == 0 || tipo == 1) {
+        membresia = tipo;
+    }
+}
+
+void Usuario::setFechaInscripcion(const string& fecha) {
+    fechaInscripcion = fecha;
+}
+
 Usuario& Usuario::operator=(const Usuario& otro) {
     if (this != &otro) {
         if (listaFavoritos != nullptr) {
@@ -167,7 +177,7 @@ Usuario& Usuario::operator=(const Usuario& otro) {
         ultimoMensajePublicitario = otro.ultimoMensajePublicitario;
 
         if (otro.listaFavoritos != nullptr) {
-            sesionreproduccion = new sesionreproduccion(*(otro.listaFavoritos));
+            listaFavoritos = new ListaReproduccion(*(otro.listaFavoritos));
         } else {
             listaFavoritos = nullptr;
         }

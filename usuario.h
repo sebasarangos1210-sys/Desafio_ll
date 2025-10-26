@@ -12,7 +12,7 @@ private:
     string ciudad;
     string pais;
     string fechaInscripcion;
-    sesionreproduccion* listaFavoritos;
+    sesionreproduccion* fuentelistafavoritos;
     int ultimoMensajePublicitario;
 
 public:
@@ -44,6 +44,8 @@ public:
     void setNickname(const string& nick);
     void setCiudad(const string& city);
     void setPais(const string& country);
+    void setMembresia(int tipo);
+    void setFechaInscripcion(const string& fecha);
 
     Usuario& operator=(const Usuario& otro);
     bool operator==(const Usuario& otro) const;

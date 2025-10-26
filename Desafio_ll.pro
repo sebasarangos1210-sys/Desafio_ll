@@ -13,6 +13,7 @@ SOURCES += \
         credito.cpp \
         fuentealeatoria.cpp \
         fuentelistafavoritos.cpp \
+        fuentereproduccion.cpp \
         sesionreproduccion.cpp \
         usuario.cpp
 
@@ -24,5 +25,6 @@ HEADERS += \
     credito.h \
     fuentealeatoria.h \
     fuentelistafavoritos.h \
+    fuentereproduccion.h \
     sesionreproduccion.h \
     usuario.h

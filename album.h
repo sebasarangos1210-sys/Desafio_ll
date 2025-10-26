@@ -25,7 +25,7 @@ private:
     void redimensionarCanciones();
 
 public:
-    Album();  // ← LÍNEA 28 - Debe decir "Album" NO "Cancion"
+    Cancion();
     Album(int id, const string& nom, const string& fecha, const string& sello, const string& portada);
     Album(const Album& otro);
     ~Album();
@@ -54,7 +54,9 @@ public:
     int getNumCanciones() const;
     string getDuracionFormateada() const;
     string* getGeneros() const;
+    int getCapacidadGeneros() const;
     Cancion** getCanciones() const;
+    int getCapacidadCanciones() const;
 
     void setNombre(const string& nom);
     void setId(int nuevoId);

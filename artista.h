@@ -45,6 +45,7 @@ public:
     int getNumAlbumes() const;
     int getTotalCanciones() const;
     Album** getAlbumes() const;
+    int getCapacidadAlbumes() const;
 
     void setEdad(int nuevaEdad);
     void setId(int nuevoId);
@@ -52,6 +53,7 @@ public:
     void setPosicionTendencia(int posicion);
     void setSeguidores(int numSeguidores);
     void setNumAlbumes(int cantidad);
+    void setAlbumes(Album** nuevosAlbumes, int cantidad);
 
     Artista& operator=(const Artista& otro);
     bool operator==(const Artista& otro) const;

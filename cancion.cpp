@@ -179,14 +179,11 @@ Credito* Cancion::getCredito(int indice) const {
 
 // Obtener todos los créditos
 Credito** Cancion::getCreditos() const {
-    if (numCreditos == 0) {
-        return nullptr;
-    }
-    Credito** copia = new Credito*[numCreditos];
-    for (int i = 0; i < numCreditos; i++) {
-        copia[i] = creditos[i];
-    }
-    return copia;
+    return creditos;
+}
+
+int Cancion::getCapacidadCreditos() const {
+    return capacidadCreditos;
 }
 
 // Establecer todos los créditos

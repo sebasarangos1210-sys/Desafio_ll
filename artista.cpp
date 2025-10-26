@@ -212,14 +212,11 @@ int Artista::getTotalCanciones() const {
 }
 
 Album** Artista::getAlbumes() const {
-    if (numAlbumes == 0) {
-        return nullptr;
-    }
-    Album** copia = new Album*[numAlbumes];
-    for (int i = 0; i < numAlbumes; i++) {
-        copia[i] = albumes[i];
-    }
-    return copia;
+    return albumes;
+}
+
+int Artista::getCapacidadAlbumes() const {
+    return capacidadAlbumes;
 }
 
 void Artista::setEdad(int nuevaEdad) {
@@ -349,19 +346,4 @@ Album* Artista::operator[](int indice) const {
         return albumes[indice];
     }
     return nullptr;
-}
-
-int Artista::calcularMemoriaUsada() const {
-    int total = sizeof(*this);
-    total += paisOrigen.capacity();
-
-    total += sizeof(Album*) * capacidadAlbumes;
-
-    for (int i = 0; i < numAlbumes; i++) {
-        if (albumes[i] != nullptr) {
-            total += albumes[i]->calcularMemoriaUsada();
-        }
-    }
-
-    return total;
 }
