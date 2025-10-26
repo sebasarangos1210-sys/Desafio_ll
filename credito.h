@@ -9,7 +9,7 @@ private:
     string nombres;
     string apellidos;
     string codigoAfiliacion;
-    int tipoCredito;
+    string tipoCredito;
 
 public:
     Credito();

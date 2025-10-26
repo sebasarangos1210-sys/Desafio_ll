@@ -25,7 +25,7 @@ private:
     void redimensionarCanciones();
 
 public:
-    Album();
+    Album();  // ← LÍNEA 28 - Debe decir "Album" NO "Cancion"
     Album(int id, const string& nom, const string& fecha, const string& sello, const string& portada);
     Album(const Album& otro);
     ~Album();
@@ -54,6 +54,7 @@ public:
     int getNumCanciones() const;
     string getDuracionFormateada() const;
     string* getGeneros() const;
+    Cancion** getCanciones() const;
 
     void setNombre(const string& nom);
     void setId(int nuevoId);
@@ -61,6 +62,11 @@ public:
     void setSelloDisquero(const string& sello);
     void setPortada(const string& port);
     void setPuntuacion(float punt);
+    void setDuracionTotal(int duracion);
+    void setNumCanciones(int cantidad);
+    void setNumGeneros(int cantidad);
+    void setGeneros(string* nuevosGeneros, int cantidad);
+    void setCanciones(Cancion** nuevasCanciones, int cantidad);
 
     Album& operator=(const Album& otro);
     bool operator==(const Album& otro) const;

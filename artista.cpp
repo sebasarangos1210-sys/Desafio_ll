@@ -211,6 +211,17 @@ int Artista::getTotalCanciones() const {
     return total;
 }
 
+Album** Artista::getAlbumes() const {
+    if (numAlbumes == 0) {
+        return nullptr;
+    }
+    Album** copia = new Album*[numAlbumes];
+    for (int i = 0; i < numAlbumes; i++) {
+        copia[i] = albumes[i];
+    }
+    return copia;
+}
+
 void Artista::setEdad(int nuevaEdad) {
     if (nuevaEdad > 0) {
         edad = nuevaEdad;
@@ -236,6 +247,34 @@ void Artista::setPosicionTendencia(int posicion) {
 void Artista::setSeguidores(int numSeguidores) {
     if (numSeguidores >= 0) {
         seguidores = numSeguidores;
+    }
+}
+
+void Artista::setNumAlbumes(int cantidad) {
+    if (cantidad >= 0) {
+        numAlbumes = cantidad;
+    }
+}
+
+void Artista::setAlbumes(Album** nuevosAlbumes, int cantidad) {
+    if (nuevosAlbumes == nullptr || cantidad < 0) {
+        return;
+    }
+
+    // Limpiar álbumes existentes
+    for (int i = 0; i < numAlbumes; i++) {
+        if (albumes[i] != nullptr) {
+            delete albumes[i];
+            albumes[i] = nullptr;
+        }
+    }
+    numAlbumes = 0;
+
+    // Agregar nuevos álbumes
+    for (int i = 0; i < cantidad; i++) {
+        if (nuevosAlbumes[i] != nullptr) {
+            agregarAlbum(nuevosAlbumes[i]);
+        }
     }
 }
 

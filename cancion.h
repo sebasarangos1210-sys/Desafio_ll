@@ -7,11 +7,11 @@ using namespace std;
 
 class Cancion {
 private:
-    int id;
+    int id;                      // 9 dígitos: [5-artista][2-album][2-cancion]
     string nombre;
-    int duracion;
-    string ubicacionArchivo;
-    Credito** creditos;
+    int duracion;                // En segundos
+    string ubicacionArchivo;     // Ruta base sin calidad ni extensión
+    Credito** creditos;          // Arreglo dinámico de punteros a Credito
     int numCreditos;
     int capacidadCreditos;
     int vecesReproducida;
@@ -32,9 +32,11 @@ public:
     void agregarCredito(Credito* credito);
     bool eliminarCredito(const string& codigoAfiliacion);
     Credito* buscarCredito(const string& codigoAfiliacion) const;
-    Credito** obtenerCreditosPorTipo(int tipo, int& cantidad) const;
+    Credito** obtenerCreditosPorTipo(const string& tipo, int& cantidad) const;
     void setCredito(int indice, Credito* credito);
     Credito* getCredito(int indice) const;
+    Credito** getCreditos() const;
+    void setCreditos(Credito** nuevosCreditos, int cantidad);
 
     // Métodos para manejo de ID jerárquico
     int extraerIdArtista() const;
@@ -60,6 +62,8 @@ public:
     void setNombre(const string& nom);
     void setDuracion(int dur);
     void setUbicacionArchivo(const string& ubicacion);
+    void setVecesReproducida(int cantidad);
+    void setNumCreditos(int cantidad);
 
     // Sobrecarga de operadores
     Cancion& operator=(const Cancion& otra);
@@ -73,4 +77,4 @@ public:
     int calcularMemoriaUsada() const;
 };
 
-#endif // CANCION_H
+#endif

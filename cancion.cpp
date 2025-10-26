@@ -129,8 +129,8 @@ Credito* Cancion::buscarCredito(const string& codigoAfiliacion) const {
     return nullptr;
 }
 
-// Obtener créditos por tipo (1=Productor, 2=Músico, 3=Compositor)
-Credito** Cancion::obtenerCreditosPorTipo(int tipo, int& cantidad) const {
+// Obtener créditos por tipo ("Productor", "Musico", "Compositor")
+Credito** Cancion::obtenerCreditosPorTipo(const string& tipo, int& cantidad) const {
     // Contar cuántos hay de ese tipo
     cantidad = 0;
     for (int i = 0; i < numCreditos; i++) {
@@ -175,6 +175,41 @@ Credito* Cancion::getCredito(int indice) const {
         return creditos[indice];
     }
     return nullptr;
+}
+
+// Obtener todos los créditos
+Credito** Cancion::getCreditos() const {
+    if (numCreditos == 0) {
+        return nullptr;
+    }
+    Credito** copia = new Credito*[numCreditos];
+    for (int i = 0; i < numCreditos; i++) {
+        copia[i] = creditos[i];
+    }
+    return copia;
+}
+
+// Establecer todos los créditos
+void Cancion::setCreditos(Credito** nuevosCreditos, int cantidad) {
+    if (nuevosCreditos == nullptr || cantidad < 0) {
+        return;
+    }
+
+    // Limpiar créditos existentes
+    for (int i = 0; i < numCreditos; i++) {
+        if (creditos[i] != nullptr) {
+            delete creditos[i];
+            creditos[i] = nullptr;
+        }
+    }
+    numCreditos = 0;
+
+    // Agregar nuevos créditos
+    for (int i = 0; i < cantidad; i++) {
+        if (nuevosCreditos[i] != nullptr) {
+            agregarCredito(nuevosCreditos[i]);
+        }
+    }
 }
 
 // Extraer ID del artista (primeros 5 dígitos)
@@ -268,6 +303,18 @@ void Cancion::setUbicacionArchivo(const string& ubicacion) {
     ubicacionArchivo = ubicacion;
 }
 
+void Cancion::setVecesReproducida(int cantidad) {
+    if (cantidad >= 0) {
+        vecesReproducida = cantidad;
+    }
+}
+
+void Cancion::setNumCreditos(int cantidad) {
+    if (cantidad >= 0) {
+        numCreditos = cantidad;
+    }
+}
+
 // --- SOBRECARGA DE OPERADORES ---
 
 // Operador de asignación
@@ -330,10 +377,11 @@ bool Cancion::operator>(const Cancion& otra) const {
     return vecesReproducida > otra.vecesReproducida;
 }
 
+// Calcular memoria usada
 int Cancion::calcularMemoriaUsada() const {
     int total = sizeof(*this);
-    total += nombre.length();
-    total += ubicacionArchivo.length();
+    total += nombre.capacity();
+    total += ubicacionArchivo.capacity();
 
     // Memoria del arreglo de créditos
     total += sizeof(Credito*) * capacidadCreditos;

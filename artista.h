@@ -44,12 +44,14 @@ public:
     int getPosicionTendencia() const;
     int getNumAlbumes() const;
     int getTotalCanciones() const;
+    Album** getAlbumes() const;
 
     void setEdad(int nuevaEdad);
     void setId(int nuevoId);
     void setPaisOrigen(const string& pais);
     void setPosicionTendencia(int posicion);
     void setSeguidores(int numSeguidores);
+    void setNumAlbumes(int cantidad);
 
     Artista& operator=(const Artista& otro);
     bool operator==(const Artista& otro) const;

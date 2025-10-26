@@ -270,6 +270,17 @@ string* Album::getGeneros() const {
     return copia;
 }
 
+Cancion** Album::getCanciones() const {
+    if (numCanciones == 0) {
+        return nullptr;
+    }
+    Cancion** copia = new Cancion*[numCanciones];
+    for (int i = 0; i < numCanciones; i++) {
+        copia[i] = canciones[i];
+    }
+    return copia;
+}
+
 void Album::setNombre(const string& nom) {
     nombre = nom;
 }
@@ -293,6 +304,57 @@ void Album::setPortada(const string& port) {
 void Album::setPuntuacion(float punt) {
     if (punt >= 1.0f && punt <= 10.0f) {
         puntuacion = punt;
+    }
+}
+
+void Album::setDuracionTotal(int duracion) {
+    if (duracion >= 0) {
+        duracionTotal = duracion;
+    }
+}
+
+void Album::setNumCanciones(int cantidad) {
+    if (cantidad >= 0) {
+        numCanciones = cantidad;
+    }
+}
+
+void Album::setNumGeneros(int cantidad) {
+    if (cantidad >= 0 && cantidad <= 4) {
+        numGeneros = cantidad;
+    }
+}
+
+void Album::setGeneros(string* nuevosGeneros, int cantidad) {
+    if (nuevosGeneros == nullptr || cantidad < 0 || cantidad > 4) {
+        return;
+    }
+
+    numGeneros = 0;
+    for (int i = 0; i < cantidad; i++) {
+        agregarGenero(nuevosGeneros[i]);
+    }
+}
+
+void Album::setCanciones(Cancion** nuevasCanciones, int cantidad) {
+    if (nuevasCanciones == nullptr || cantidad < 0) {
+        return;
+    }
+
+    // Limpiar canciones existentes
+    for (int i = 0; i < numCanciones; i++) {
+        if (canciones[i] != nullptr) {
+            delete canciones[i];
+            canciones[i] = nullptr;
+        }
+    }
+    numCanciones = 0;
+
+    // Agregar nuevas canciones
+    for (int i = 0; i < cantidad; i++) {
+        if (nuevasCanciones[i] != nullptr) {
+            agregarCancion(nuevasCanciones[i]);
+        }
     }
 }
 
@@ -367,24 +429,4 @@ Cancion* Album::operator[](int indice) const {
     return nullptr;
 }
 
-int Album::calcularMemoriaUsada() const {
-    int total = sizeof(*this);
-    total += nombre.length();
-    total += fechaLanzamiento.length();
-    total += selloDisquero.length();
-    total += portada.length();
 
-    total += sizeof(string) * capacidadGeneros;
-    for (int i = 0; i < numGeneros; i++) {
-        total += generos[i].length();
-    }
-
-    total += sizeof(Cancion*) * capacidadCanciones;
-    for (int i = 0; i < numCanciones; i++) {
-        if (canciones[i] != nullptr) {
-            total += canciones[i]->calcularMemoriaUsada();
-        }
-    }
-
-    return total;
-}
