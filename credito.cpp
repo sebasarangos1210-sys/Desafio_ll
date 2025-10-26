@@ -1,5 +1,4 @@
 #include "Credito.h"
-#include <cctype>
 
 Credito::Credito()
     : nombres(""), apellidos(""), codigoAfiliacion(""), tipoCredito(1) {
