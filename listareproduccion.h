@@ -21,6 +21,8 @@ public:
 
     bool agregarCancion(Cancion* cancion);
     bool eliminarCancion(int idCancion);
+    void vaciar();  // Vaciar toda la lista
+    void limpiar();
     Cancion* buscarCancion(int idCancion) const;
     bool estaVacia() const;
     bool estaLlena() const;

@@ -109,6 +109,19 @@ ListaReproduccion& ListaReproduccion::operator+=(const ListaReproduccion& otra) 
     return *this;
 }
 
+void ListaReproduccion::vaciar() {
+    // No eliminamos las canciones (son punteros a canciones de álbumes)
+    // Solo limpiamos el arreglo de referencias
+    for (int i = 0; i < numCanciones; i++) {
+        canciones[i] = nullptr;
+    }
+    numCanciones = 0;
+}
+
+void ListaReproduccion::limpiar() {
+    vaciar();
+}
+
 int ListaReproduccion::calcularMemoriaUsada() const {
     int total = sizeof(*this);
 

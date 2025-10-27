@@ -12,7 +12,7 @@ private:
     string ciudad;
     string pais;
     string fechaInscripcion;
-    sesionreproduccion* FuenteReproduccion;
+    listareproduccion* FuenteReproduccion;
     int ultimoMensajePublicitario;
 
 public:
