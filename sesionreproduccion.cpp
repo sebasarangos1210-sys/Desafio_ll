@@ -64,3 +64,11 @@ FuenteReproduccion* SesionReproduccion::getFuente() const {
 void SesionReproduccion::setFuente(FuenteReproduccion* fuenteReproduccion) {
     fuente = fuenteReproduccion;
 }
+
+int SesionReproduccion::calcularMemoriaUsada() const {
+    int total = sizeof(*this);
+    if (fuente != nullptr) {
+        total += fuente->calcularMemoriaUsada();
+    }
+    return total;
+}

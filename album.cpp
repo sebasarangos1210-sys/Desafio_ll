@@ -423,4 +423,30 @@ Cancion* Album::operator[](int indice) const {
     return nullptr;
 }
 
+int Album::calcularMemoriaUsada() const {
+    int total = sizeof(*this);
+
+    // Memoria de strings
+    total += nombre.length();
+    total += fechaLanzamiento.length();
+    total += selloDisquero.length();
+    total += portada.length();
+
+    // Memoria del arreglo de géneros
+    total += sizeof(string) * capacidadGeneros;
+    for (int i = 0; i < numGeneros; i++) {
+        total += generos[i].length();
+    }
+
+    // Memoria del arreglo de canciones
+    total += sizeof(Cancion*) * capacidadCanciones;
+    for (int i = 0; i < numCanciones; i++) {
+        if (canciones[i] != nullptr) {
+            total += canciones[i]->calcularMemoriaUsada();
+        }
+    }
+
+    return total;
+}
+
 

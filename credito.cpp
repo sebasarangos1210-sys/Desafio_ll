@@ -120,9 +120,9 @@ bool Credito::operator<(const Credito& otro) const {
 
 int Credito::calcularMemoriaUsada() const {
     int total = sizeof(*this);
-    if (nombres != nullptr) {
-        total += sizeof(string) + nombres->length();
-    }
+    total += nombres.length();
     total += apellidos.length();
     total += codigoAfiliacion.length();
+    total += tipoCredito.length();
     return total;
+}

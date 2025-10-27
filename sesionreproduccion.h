@@ -25,6 +25,7 @@ public:
 
     FuenteReproduccion* getFuente() const;
     void setFuente(FuenteReproduccion* fuenteReproduccion);
+    int calcularMemoriaUsada() const;
 };
 
 #endif
