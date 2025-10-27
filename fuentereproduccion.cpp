@@ -1,6 +1,5 @@
 #include "FuenteReproduccion.h"
 #include <random>
-#include <chrono>
 
 // Generador de números aleatorios moderno (C++11)
 static std::mt19937 generador_fuente(std::chrono::steady_clock::now().time_since_epoch().count());
