@@ -2,7 +2,7 @@
 #define USUARIO_H
 
 #include <string>
-#include "ListaReproduccion.h"
+#include "sesionreproduccion.h"
 using namespace std;
 
 class Usuario {
