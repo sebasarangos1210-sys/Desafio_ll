@@ -12,6 +12,7 @@ SOURCES += \
         clases_credito_mensajepublicitario.cpp \
         credito.cpp \
         fuentereproduccion.cpp \
+        listareproduccion.cpp \
         sesionreproduccion.cpp \
         usuario.cpp
 
@@ -22,5 +23,6 @@ HEADERS += \
     cancion.h \
     credito.h \
     fuentereproduccion.h \
+    listareproduccion.h \
     sesionreproduccion.h \
     usuario.h

@@ -18,7 +18,6 @@ public:
     };
 
 private:
-    Sistema* sistema;                   // Referencia al sistema para acceso a canciones
     sesionreproduccion* sesionreproduccion; // Lista específica para reproducir
     TipoFuente tipoFuente;              // Tipo de fuente actual
 
