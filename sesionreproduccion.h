@@ -3,30 +3,25 @@
 
 #include "Usuario.h"
 #include "Cancion.h"
-#include "FuenteAleatoria.h"
-
-// evitar dependencia circular
-class FuenteListaFavoritos;
+#include "FuenteReproduccion.h"
+#include <random>
+#include <chrono>
 
 class SesionReproduccion {
 private:
     Usuario* usuario;
     Cancion* cancionActual;
-    Cancion** listaReproduccion;
-    int cantidadLista;
-    int capacidadLista;
     Cancion** historial;
     int cantidadHistorial;
     int capacidadHistorial;
-    int indiceActual;
     bool repetir;
     bool enReproduccion;
-    bool modoAleatorio;
     int contadorCanciones;
-    FuenteAleatoria* fuenteAleatoria;
-    FuenteListaFavoritos* fuenteFavoritos;
+    FuenteReproduccion* fuente;
 
-    void redimensionarLista();
+    std::mt19937 generador;
+    std::chrono::steady_clock::time_point tiempoInicio;
+
     void redimensionarHistorial();
     void agregarAlHistorial(Cancion* cancion);
 
@@ -40,25 +35,19 @@ public:
     bool siguiente();
     bool anterior();
 
-    void establecerFuenteAleatoria(FuenteAleatoria* fuente);
-    void establecerFuenteFavoritos(FuenteListaFavoritos* fuente);
-
-    bool agregarALista(Cancion* cancion);
-    void mostrarInterfaz();
-    void manejarPublicidad();
+    void establecerFuente(FuenteReproduccion* fuenteReproduccion);
     bool puedeRetroceder();
     bool haySiguiente();
+    long long obtenerTiempoTranscurrido();
 
-    // Getters
     Usuario* getUsuario() const;
     Cancion* getCancionActual() const;
     bool estaEnReproduccion() const;
-    bool esModoAleatorio() const;
     bool esModoRepetir() const;
     int getContadorCanciones() const;
+    int getCantidadHistorial() const;
+    FuenteReproduccion* getFuente() const;
 
-    // Setters
-    void setModoAleatorio(bool activar);
     void setModoRepetir(bool activar);
 
     int calcularMemoriaUsada() const;
