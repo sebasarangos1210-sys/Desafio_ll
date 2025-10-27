@@ -19,7 +19,7 @@ public:
 
 private:
     Sistema* sistema;                   // Referencia al sistema para acceso a canciones
-    ListaReproduccion* listaReproduccion; // Lista específica para reproducir
+    sesionreproduccion* sesionreproduccion; // Lista específica para reproducir
     TipoFuente tipoFuente;              // Tipo de fuente actual
 
     Cancion** cancionesReproducidas;    // Historial de canciones ya reproducidas
@@ -28,6 +28,11 @@ private:
 
     int indiceActual;                   // Índice actual para listas secuenciales
     bool modoAleatorio;                 // true = aleatorio, false = secuencial
+    Cancion* siguienteCancion();
+    Cancion* cancionAnterior();
+    Cancion* cancionActual() const;
+    bool haySiguiente() const;
+    bool hayAnterior() const;
 
     std::mt19937 generador;             // Generador de números aleatorios (C++11)
 
@@ -36,6 +41,11 @@ private:
     int generarIndiceAleatorio(int max);// Genera índice aleatorio usando <random>
     Cancion* seleccionarCancionAleatoria(); // Selecciona canción aleatoria del sistema
     bool yaFueReproducida(int idCancion);   // Verifica si canción ya fue reproducida
+
+    static const int LIMITE_RETROCESO_ALEATORIO = 4;
+    static const int LIMITE_RETROCESO_FAVORITOS = 6;
+
+    int obtenerLimiteRetroceso() const;
 
 public:
     // CONSTRUCTORES
@@ -67,4 +77,3 @@ public:
 
 #endif
 
-#endif

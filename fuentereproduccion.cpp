@@ -5,7 +5,7 @@
 static std::mt19937 generador_fuente(std::chrono::steady_clock::now().time_since_epoch().count());
 
 FuenteReproduccion::FuenteReproduccion()
-    : sistema(nullptr), listaReproduccion(nullptr),
+    : sistema(nullptr), sesionreproduccion(nullptr),
     tipoFuente(LISTA_PERSONALIZADA), cancionesReproducidas(nullptr),
     cantidadReproducidas(0), capacidadReproducidas(100),
     indiceActual(0), modoAleatorio(false) {
@@ -17,7 +17,7 @@ FuenteReproduccion::FuenteReproduccion()
 }
 
 FuenteReproduccion::FuenteReproduccion(Sistema* sistema)
-    : sistema(sistema), listaReproduccion(nullptr),
+    : sistema(sistema), sesionreproducccion(nullptr),
     tipoFuente(ALEATORIA_SISTEMA), cancionesReproducidas(nullptr),
     cantidadReproducidas(0), capacidadReproducidas(100),
     indiceActual(0), modoAleatorio(true) {
@@ -29,7 +29,7 @@ FuenteReproduccion::FuenteReproduccion(Sistema* sistema)
 }
 
 FuenteReproduccion::FuenteReproduccion(ListaReproduccion* lista)
-    : sistema(nullptr), listaReproduccion(lista),
+    : sistema(nullptr), sesionreproduccion(lista),
     tipoFuente(LISTA_FAVORITOS), cancionesReproducidas(nullptr),
     cantidadReproducidas(0), capacidadReproducidas(100),
     indiceActual(0), modoAleatorio(false) {
@@ -80,7 +80,7 @@ void FuenteReproduccion::establecerSistema(Sistema* sis) {
     reiniciar();
 }
 
-void FuenteReproduccion::establecerListaReproduccion(ListaReproduccion* lista) {
+void FuenteReproduccion::establecersesionreproduccion(ListaReproduccion* lista) {
     listaReproduccion = lista;
     sistema = nullptr;
     tipoFuente = LISTA_FAVORITOS;
@@ -101,7 +101,7 @@ Cancion* FuenteReproduccion::siguienteCancion() {
             if (modoAleatorio) {
                 indiceActual = generarIndiceAleatorio(listaReproduccion->getNumCanciones());
             } else {
-                if (indiceActual >= listaReproduccion->getNumCanciones()) {
+                if (indiceActual >= sesionreproduccion->getNumCanciones()) {
                     indiceActual = 0;  // Volver al inicio cuando llega al final
                 }
             }
@@ -132,8 +132,8 @@ Cancion* FuenteReproduccion::cancionActual() const {
         }
     } else {
         if (listaReproduccion != nullptr && indiceActual >= 0 &&
-            indiceActual < listaReproduccion->getNumCanciones()) {
-            return (*listaReproduccion)[indiceActual];
+            indiceActual < sesionreproduccion->getNumCanciones()) {
+            return (*sesionreproduccion)[indiceActual];
         }
     }
     return nullptr;
@@ -145,8 +145,8 @@ bool FuenteReproduccion::haySiguiente() const {
         int totalCanciones = sistema->getTotalCanciones();
         return cantidadReproducidas < totalCanciones;
     } else {
-        if (listaReproduccion == nullptr) return false;
-        return !listaReproduccion->estaVacia();
+        if (sesionreproduccion == nullptr) return false;
+        return !sesionreproduccion->estaVacia();
     }
 }
 
@@ -212,6 +212,86 @@ bool FuenteReproduccion::yaFueReproducida(int idCancion) {
     return false;
 }
 
+Cancion* FuenteReproduccion::cancionAnterior() {
+    if (cantidadReproducidas < 2) {
+        return nullptr;  // No hay canción anterior
+    }
+
+    if (tipoFuente == ALEATORIA_SISTEMA) {
+        // Para reproducción aleatoria: retroceder en el historial
+        // Límite: 4 canciones hacia atrás (según enunciado)
+        if (cantidadReproducidas >= 2) {
+            cantidadReproducidas--;  // Retroceder una posición
+            return cancionesReproducidas[cantidadReproducidas - 1];
+        }
+    }
+    else if (tipoFuente == LISTA_FAVORITOS || tipoFuente == LISTA_PERSONALIZADA) {
+        if (!modoAleatorio) {
+            // Modo secuencial: retroceder en la lista
+            if (indiceActual > 0) {
+                indiceActual--;
+                return (*listaReproduccion)[indiceActual];
+            }
+        } else {
+            // Modo aleatorio de lista: usar historial
+            if (cantidadReproducidas >= 2) {
+                cantidadReproducidas--;
+                return cancionesReproducidas[cantidadReproducidas - 1];
+            }
+        }
+    }
+
+    return nullptr;
+}
+
+int FuenteReproduccion::obtenerLimiteRetroceso() const {
+    if (tipoFuente == ALEATORIA_SISTEMA) {
+        return LIMITE_RETROCESO_ALEATORIO;  // 4
+    } else {
+        return LIMITE_RETROCESO_FAVORITOS;   // 6
+    }
+}
+
+Cancion* FuenteReproduccion::cancionAnterior() {
+    int limite = obtenerLimiteRetroceso();
+
+    // Verificar si hay suficiente historial
+    if (cantidadReproducidas < 2) {
+        return nullptr;  // No hay canción anterior
+    }
+
+    // Calcular cuántas canciones podemos retroceder desde la posición actual
+    int cancionesDisponibles = cantidadReproducidas - 1;
+
+    if (cancionesDisponibles > limite) {
+        // Solo podemos retroceder hasta el límite
+        // No permitir ir más allá
+        return nullptr;
+    }
+
+    // Retroceder una posición en el historial
+    cantidadReproducidas--;
+    return cancionesReproducidas[cantidadReproducidas - 1];
+}
+
+bool FuenteReproduccion::hayAnterior() const {
+    if (cantidadReproducidas < 2) {
+        return false;
+    }
+
+    int limite = obtenerLimiteRetroceso();
+    int cancionesDisponibles = cantidadReproducidas - 1;
+
+    return cancionesDisponibles <= limite;
+}
+
+int FuenteReproduccion::getCancionesRetrocesoPosibles() const {
+    int limite = obtenerLimiteRetroceso();
+    int disponibles = cantidadReproducidas - 1;
+
+    return (disponibles < limite) ? disponibles : limite;
+}
+
 void FuenteReproduccion::setModoAleatorio(bool activar) {
     modoAleatorio = activar;
 }
@@ -228,7 +308,7 @@ int FuenteReproduccion::getCantidadCanciones() const {
     if (tipoFuente == ALEATORIA_SISTEMA) {
         return sistema != nullptr ? sistema->getTotalCanciones() : 0;
     } else {
-        return listaReproduccion != nullptr ? listaReproduccion->getNumCanciones() : 0;
+        return sesionreproduccion != nullptr ? sesionreproduccion->getNumCanciones() : 0;
     }
 }
 

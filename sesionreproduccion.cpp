@@ -41,6 +41,15 @@ bool SesionReproduccion::anterior() {
         return false;
     }
 
+    Cancion* cancion = fuente->cancionAnterior();
+    return cancion != nullptr;
+}
+
+bool SesionReproduccion::anterior() {
+    if (!enReproduccion || fuente == nullptr) {
+        return false;
+    }
+
     // La lógica de retroceso la maneja la fuente
     return true;
 }
