@@ -3,7 +3,8 @@
 #include "artista.h"
 #include "album.h"
 #include "usuario.h"
-//#include <chrono>
+#include <chrono>
+#include <thread>
 #include <fstream>
 #include <sstream>
 #include <string>
@@ -52,25 +53,25 @@ void Sistema::CargarDatos(){
     ifstream archivo4("Usuarios.txt");
     ifstream archivo5("List.Favoritos.txt");
 
-    int tamartistas = 2, filas = 0, columna = 0;
+    tamartistas = 2; int filas = 0, columna = 0;
     artistas = new Artista*[tamartistas];
     for (int i = 0; i < tamartistas; i++){
-        artistas[i] = new Artista[20];
+        artistas[i] = new Artista[30];
     }
 
-    int tamalbumes = 2, filalbum = 0, colalbum = 0;
+    tamalbumes = 2; int filalbum = 0, colalbum = 0;
     albumes = new Album*[tamalbumes];
     for (int i = 0; i < tamalbumes; i++){
-        albumes[i] = new Album[30];
+        albumes[i] = new Album[40];
     }
 
-    int tamcanciones = 2, filcancion = 0, colcancion = 0;
+    tamcanciones = 2; int filcancion = 0, colcancion = 0;
     canciones = new Cancion*[tamcanciones];
     for (int i = 0; i < tamcanciones; i++){
-        canciones[i] = new Cancion[40];
+        canciones[i] = new Cancion[100];
     }
 
-    int tamusuarios = 2, filuser = 0, coluser = 0;
+    tamusuarios = 2; int filuser = 0, coluser = 0;
     usuarios = new Usuario*[tamusuarios];
     for (int i = 0; i < tamusuarios; i++){
         usuarios[i] = new Usuario[100];
@@ -194,7 +195,7 @@ void Sistema::agregaralbumes(int& filas, int& columnas, int& tamalbumes, const A
                 if (i < filas){
                     newalbum[i] = albumes[i];
                 } else{
-                    newalbum[i] = new Album[30];
+                    newalbum[i] = new Album[40];
                 }
             }
             delete[] albumes;
@@ -281,7 +282,7 @@ void Sistema::agregarcanciones(int& filas, int& columnas, int& tamcanciones, Can
                 if (i < filas){
                     newcancion[i] = canciones[i];
                 } else{
-                    newcancion[i] = new Cancion[30];
+                    newcancion[i] = new Cancion[100];
                 }
             }
             delete[] canciones;
@@ -374,9 +375,12 @@ void Sistema::CargarUsuarios(Usuario* user, string texto){
     getline(ssUsuario, segmento, '-');
     user -> setPais(segmento);
     user -> getPais();
-    getline(ssUsuario, segmento);
+    getline(ssUsuario, segmento, '-');
     user -> setFechaInscripcion(segmento);
     user -> getFechaInscripcion();
+    getline(ssUsuario, segmento);
+    user -> setSeguido(segmento);
+    user -> getSeguido();
 }
 
 void Sistema::agregarusuarios(int& filas, int& columnas, int& tamusuarios, const Usuario* user){
@@ -395,7 +399,7 @@ void Sistema::agregarusuarios(int& filas, int& columnas, int& tamusuarios, const
                 if (i < filas){
                     newusuario[i] = usuarios[i];
                 } else{
-                    newusuario[i] = new Usuario[20];
+                    newusuario[i] = new Usuario[100];
                 }
             }
             delete[] usuarios;
@@ -413,40 +417,171 @@ void Sistema::CargarListaFavoritos(ListaFavoritos* List_user, ifstream archivo5)
     */
     string texto;
     List_user -> canciones = new Cancion*[capcanciones];
+    int num = cantcanciones%30 != 0? cantcanciones/30 +1: cantcanciones/30;
     for (int i = 0; i < capcanciones; i++){
         List_user -> canciones[i] = new Cancion[100];
+    }
     while(getline(archivo5, texto, '-')){
+        for (int i = 0; i < num; i++){
+            for (int j = 0; j < 100; j++){
+                if (canciones[i][j] -> getNombre() == texto){
+                    List_user.AgregarCancion(canciones[i][j]);
+                }
+            }
+        }
     }
 }
-/*
-void Sistema::salida_pant(){
-    Muestra en Pantalla el Menu para el Usuario.
-    Entradas ---> Void.
-    Salida ---> Void.
 
-    if (ComprobarMemb((this->usuarioactual)){
-
-    }
-}
-*/
-/*
 void Sistema::Log_out(){
+    /*
     Cierra la sesión del Usuario Actual en el Sistema.
     Entrada ---> Void.
     Salida ---> Void.
+    */
+    ofstream archivo("Artistas.txt", ios::out);
+    ofstream archivo1("Albumes.txt", ios::out);
+    ofstream archivo2("Canciones.txt", ios::out);
+    ofstream archivo3("Creditos.txt", ios::out);
+    ofstream archivo4("Usuarios.txt", ios::out);
+    ofstream archivo5("List.Favoritos.txt", ios::out);
+    ofstream archivo6("Mensajes.txt");
 
-    for (int i = 0; i < tamreproducidas; i++){
-        delete[] reproducidas[i];
+    archivo2 << "Nombre-Identificacion-Duracion-Ubicacion Archivos-Numero Creditos-Veces Reproducida\n";
+    archivo1 << "Numero Generos-Generos-Fecha Lanzamiento-Duracion-Nombre-Numero Canciones-Identificador-Sello-Imagen-Puntuacion\n";
+    archivo << "Identificacion-Edad-Pais-Seguidores-Top Ranking-Numero Albumes\n";
+    archivo3 << "Tipo Credito-Nombre-Apellido-Codigo-Regalias\n";
+    archivo4 << "Nickname-Membresia-Ciudad-Pais-Fecha Inscripcion-Usuario Seguido\n";
+    archivo6 << "Categoria Mensaje-Contenido\n";
+    for (int i = 0; i < tamcanciones; i++){
+        for (int j = 0; j < 100; j++){
+            archivo << canciones[i][j] -> getNombre() << "-" << canciones[i][j] -> getId() << "-" << canciones[i][j] -> getDuracion() << "-" << canciones[i][j] -> getUbicacionArchivo() << "-" << canciones[i][j] -> getNumCreditos() << "-" << canciones[i][j] -> getVecesReproducida() << "\n";
+            if (i*100 + j == cantcanciones-1){
+                break;
+            }
+        }
+        if (i == cantcanciones/100){
+            break;
+        }
     }
-    delete[] reproducidas;
 
-    for (int i = 0; i < usuarioactual.tamlisfav_; i++){
-        delete[] usuarioactual.List_favourites[i];
+    for (int i = 0; i < tamalbumes; i++){
+        for (int j = 0; j < 40; j++){
+            archivo1 << albumes[i][j] -> getNumGeneros() << "-";
+                for (int k = 1; k <= albumes[i][j] -> getNumGeneros(); k++){
+                    if (k < albumes[i][j] -> getNumGeneros()){
+                        archivo1 << albumes[i][j] -> getGeneros()[k] << ",";
+                    } else{
+                        archivo1 << albumes[i][j] -> getGeneros()[k];
+                    }
+                }
+            archivo1 << canciones[i][j] -> getFechaLanzamiento() << "-" << canciones[i][j] -> getDuracion() << "-" << canciones[i][j] -> getNombre() << "-" << canciones[i][j] -> getNumCanciones() <<
+            canciones[i][j] -> getId() << "-" << canciones[i][j] -> getSelloDisquero() << "-" << canciones[i][j] -> getPortada() << "-" << canciones[i][j] -> getPuntuacion() << "\n";
+            if (i*40 + j == cantalbumes-1){
+                break;
+            }
+        }
+        if (i == cantalbumes/40){
+            break;
+        }
     }
-    delete[] usuarioactual.List_favourites;
 
-    usuarioactual.List_favourites = nullptr;
-    reproducidas = nullptr;
+    for (int i = 0; i < tamartistas; i++){
+        for (int j = 0; j < 30; j++){
+            archivo << artistas[i][j] -> getId() << "-" << artistas[i][j] -> getEdad() << "-" << artistas[i][j] -> getPaisOrigen() << "-" << artistas[i][j] -> getSeguidores() << "-" << artistas[i][j] -> getPosicionTendencia() << "-" << artistas[i][j] -> getNumAlbumes() << "\n";
+            if (i*30 + j == cantartistas-1){
+                break;
+            }
+        }
+        if (i == cantartistas/30){
+            break;
+        }
+    }
+
+    for (int i = 0; i < tamusuarios; i++){
+        for (int j = 0; j < 100; j++){
+            archivo << usuarios[i][j] -> getNickname() << "-" << usuarios[i][j] -> getMembresia() << "-" << usuarios[i][j] -> getCiudad() << "-" << usuarios[i][j] -> getPais() << "-" << usuarios[i][j] -> getFechaInscripcion() << "-" << usuarios[i][j] -> getSeguido() << "\n";
+            if (i*100 + j == cantusuarios-1){
+                break;
+            }
+        }
+        if (i == cantusuarios/100){
+            break;
+        }
+    }
 }
 
+Usuario* Sistema::getusuarioactual(){
+    /*Entrega el Usuario Actual que ha ingresado al Sistema.
+    Entradas ---> Void.
+    Salida ---> Void.
+    */
+    return usuarioactual;
+}
 
+void Sistema::reproducir(){
+    /*Comienza la Accion de Reproducir las Canciones segun corresponde al Usuario.
+    Entradas ---> Void.
+    Salida ---> Void.
+    */
+    if (sesion.estaEnReproduccion()){
+        cout << "Ya el Sistema se encuentra en Reproduccion.\n";
+    } else {
+        sesion.iniciar();
+    }
+}
+
+void Sistema::pausa(){
+    /*Pausa la Reproduccion de las Canciones.
+    Entradas ---> Void.
+    Salida ---> Void.
+    */
+    if (!sesion.estaEnReproduccion()){
+        cout << "Ya el Sistema se encuentra en Pausa.\n";
+    } else{
+        sesion.detener();
+    }
+}
+
+char Sistema::reproduccion(Usuario& useractual){
+    /*Modela las Acciones de Interaccion con el Usuario.
+    Entradas ---> Void.
+    Salida ---> Void.
+    */
+    string Opciones;
+    this -> reproducir();
+    FuenteReproduccion f_user = useractual.getFuenteReproduccion();
+    if (f_user.CantidadReproducidas() != 0){
+        cancionactual = f_user.siguienteCancion();
+    }
+    while (tiemporeproduccion < cancionactual.getDuracion()){
+        if (sesion.enReproduccion){
+            tiemporeproduccion++;
+        }
+        cout << "¿Que Accion Deseas Realizar?\nAccion: ";
+        cin >> Opciones;
+
+        while (Opciones < 49 || Opciones > 53){
+            cout << "Has Ingresado una Opcion no Disponible.\nIntenta Nuevamente: ";
+            cin >> Opciones;
+        }
+
+        if (Opciones == '1'){
+            this -> reproducir();
+        } else if (Opciones == '2'){
+            this -> pausa();
+        } else if (Opciones == '3'){
+
+        } else{
+            return Opciones;
+        }
+    }
+}
+
+void Sistema::pasarcancion(FuenteReproduccion* f_user){
+    /*Pasa a la siguiente Cancion.
+    Entradas ---> Void.
+    Salida ---> Void.
+    */
+    tiemporeproduccion = 0;
+    cancionactual = f_user.
+}

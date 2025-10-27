@@ -7,6 +7,8 @@
 #include "artista.h"
 #include "usuario.h"
 #include "reproduccion.h"
+#include <chrono>
+#include <thread>
 
 using namespace std;
 
@@ -32,7 +34,17 @@ class Sistema {
         void agregarusuarios(int& filas, int& columnas, int& tamusuarios, const Usuario* user);
 
         bool ComprobarMemb(const Usuario* usuarioactual); //Verifica la Membresia del Usuario
+        char reproduccion(Usuario& useractual);
+        void reproducir();
+        void pausa();
+        void buscarUsuario();
+        void BuscarCancion();
+        void repetir();
+        void siguiente();
+        void anterior();
+        void SalidaPantalla();
 
+        string getusuarioactual() const;
         Usuario* getusuarios() const; //Permite obtener el valor dedl Arreglo de Usuarios
         void setusuarios(Usuario& Usuario); //Ingresa la Informacion al Arreglo de Usuarios
         Album* getalbumes() const;
@@ -47,9 +59,12 @@ class Sistema {
         void setR_Canciones(Cancion Cancion); //Ingresa la Informacion al Arreglo de Canciones Reproducidas
 
     private:
+        std::chrono::steady_clock::time_point inicioReproduccion;
+        std::chrono::seconds tiempoAcumulado{0};
         Usuario** usuarios;
         int cantusuarios;
-        Usuario** usuarioactual;
+        Usuario* usuarioactual;
+        Cancion* cancionactual;
         Album** albumes;
         int cantalbumes;
         Artista** artistas;
@@ -58,6 +73,11 @@ class Sistema {
         int cantcanciones;
         MensajePublicitario* Mensajes;
         Cancion** reproducidas;
+        int tamcanciones;
+        int tamalbumes;
+        int tamartistas;
+        int tamusuarios;
+        int tiemporeproduccion;
 };
 
 #endif // SISTEMA_H

@@ -13,6 +13,7 @@ SOURCES += \
         credito.cpp \
         fuentealeatoria.cpp \
         fuentelistafavoritos.cpp \
+        main.cpp \
         sesionreproduccion.cpp \
         sistema.cpp \
         usuario.cpp
