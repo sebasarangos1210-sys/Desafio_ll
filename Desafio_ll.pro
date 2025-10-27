@@ -12,6 +12,7 @@ SOURCES += \
         clases_credito_mensajepublicitario.cpp \
         credito.cpp \
 <<<<<<< HEAD
+<<<<<<< HEAD
         fuentealeatoria.cpp \
         fuentelistafavoritos.cpp \
 =======
@@ -19,6 +20,13 @@ SOURCES += \
         listareproduccion.cpp \
 >>>>>>> Rama_sebas
         sesionreproduccion.cpp \
+=======
+        fuentealeatoria.cpp \
+        fuentelistafavoritos.cpp \
+        main.cpp \
+        sesionreproduccion.cpp \
+        sistema.cpp \
+>>>>>>> Rama_Harlin
         usuario.cpp
 
 HEADERS += \
@@ -28,6 +36,7 @@ HEADERS += \
     cancion.h \
     credito.h \
 <<<<<<< HEAD
+<<<<<<< HEAD
     fuentealeatoria.h \
     fuentelistafavoritos.h \
 =======
@@ -35,4 +44,10 @@ HEADERS += \
     listareproduccion.h \
 >>>>>>> Rama_sebas
     sesionreproduccion.h \
+=======
+    fuentealeatoria.h \
+    fuentelistafavoritos.h \
+    sesionreproduccion.h \
+    sistema.h \
+>>>>>>> Rama_Harlin
     usuario.h
