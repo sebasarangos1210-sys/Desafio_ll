@@ -374,5 +374,24 @@ bool Cancion::operator>(const Cancion& otra) const {
     return vecesReproducida > otra.vecesReproducida;
 }
 
-// Calcular memoria usada me falta
+// Calcular memoria usada
+int Cancion::calcularMemoriaUsada() const {
+    int total = sizeof(*this);
+
+    // Memoria de strings
+    total += nombre.length();
+    total += ubicacionArchivo.length();
+
+    // Memoria del arreglo de créditos
+    total += sizeof(Credito*) * capacidadCreditos;
+
+    // Memoria de cada crédito
+    for (int i = 0; i < numCreditos; i++) {
+        if (creditos[i] != nullptr) {
+            total += creditos[i]->calcularMemoriaUsada();
+        }
+    }
+
+    return total;
+}
 

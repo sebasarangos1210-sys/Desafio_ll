@@ -347,3 +347,22 @@ Album* Artista::operator[](int indice) const {
     }
     return nullptr;
 }
+
+int Artista::calcularMemoriaUsada() const {
+    int total = sizeof(*this);
+
+    // Memoria de strings
+    total += paisOrigen.length();
+
+    // Memoria del arreglo de álbumes
+    total += sizeof(Album*) * capacidadAlbumes;
+
+    // Memoria de cada álbum
+    for (int i = 0; i < numAlbumes; i++) {
+        if (albumes[i] != nullptr) {
+            total += albumes[i]->calcularMemoriaUsada();
+        }
+    }
+
+    return total;
+}

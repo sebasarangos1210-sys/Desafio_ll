@@ -111,7 +111,13 @@ ListaReproduccion& ListaReproduccion::operator+=(const ListaReproduccion& otra) 
 
 int ListaReproduccion::calcularMemoriaUsada() const {
     int total = sizeof(*this);
+
+    // Memoria del arreglo de punteros (son referencias)
     total += sizeof(Cancion*) * capacidadMaxima;
+
+    // Memoria del nombre
     total += nombre.length();
+
+
     return total;
 }
