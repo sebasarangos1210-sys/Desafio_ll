@@ -8,8 +8,8 @@
 #include <fstream>
 #include <sstream>
 #include <string>
-#include <cstring>
 #include <iostream>
+#include <random>
 
 using namespace std;
 
@@ -52,6 +52,7 @@ void Sistema::CargarDatos(){
     ifstream archivo3("Creditos.txt");
     ifstream archivo4("Usuarios.txt");
     ifstream archivo5("List.Favoritos.txt");
+    ifstream archivo6 ("Mensajes.txt");
 
     tamartistas = 2; int filas = 0, columna = 0;
     artistas = new Artista*[tamartistas];
@@ -121,9 +122,39 @@ void Sistema::CargarDatos(){
     while (getline(archivo4, texto)){
         Usuario* user = new Usuario();
         CargarUsuarios(user, texto);
-
-        CargarListaFavoritos();
+        if (user.getSeguido() != "None"){
+            ListaReproduccion* list_f = new ListaReproduccion();
+            pos = 0;
+            while (getline(archivo5, texto)){
+                for(int i = 0; i < tamcanciones; i++){
+                    for (int j = 0; j < 100 && i*100 + j; j++){
+                        if (canciones[i][j] -> getNombre() == texto){
+                            list_f -> agregarCancion(canciones[i][j]);
+                            pos++;
+                        }
+                    }
+                }
+            }
+        }
     }
+
+    int cont = 0;
+    mensajes = new MensajePublicitario[50];
+    while (cont < 50){
+        MensajePublicitario* mensaje = new MensajePublicitario();
+        getline(archivo6, texto, '-');
+        if (texto == "AAA"){
+            mensaje.setcategoria(3);
+        } else if (texto == "B"){
+            mensaje.setcategoria(2);
+        } else{
+            mensaje.setcategoria(1);
+        }
+        getline(archivo6, texto);
+        mensaje.setContenido(texto);
+        mensajes[cont] = mensaje;
+    }
+    SesionReproduccion* sesion;
 }
 
 void Sistema::CargarAlbumes(Album* album, string texto){
@@ -449,9 +480,7 @@ void Sistema::Log_out(){
     archivo2 << "Nombre-Identificacion-Duracion-Ubicacion Archivos-Numero Creditos-Veces Reproducida\n";
     archivo1 << "Numero Generos-Generos-Fecha Lanzamiento-Duracion-Nombre-Numero Canciones-Identificador-Sello-Imagen-Puntuacion\n";
     archivo << "Identificacion-Edad-Pais-Seguidores-Top Ranking-Numero Albumes\n";
-    archivo3 << "Tipo Credito-Nombre-Apellido-Codigo-Regalias\n";
     archivo4 << "Nickname-Membresia-Ciudad-Pais-Fecha Inscripcion-Usuario Seguido\n";
-    archivo6 << "Categoria Mensaje-Contenido\n";
     for (int i = 0; i < tamcanciones; i++){
         for (int j = 0; j < 100; j++){
             archivo << canciones[i][j] -> getNombre() << "-" << canciones[i][j] -> getId() << "-" << canciones[i][j] -> getDuracion() << "-" << canciones[i][j] -> getUbicacionArchivo() << "-" << canciones[i][j] -> getNumCreditos() << "-" << canciones[i][j] -> getVecesReproducida() << "\n";
@@ -508,6 +537,14 @@ void Sistema::Log_out(){
             break;
         }
     }
+
+    for (int i = 0; i < usuarioactual -> obtenerListaFavoritos() -> getNumCanciones(); i++){
+        if (i != usuarioactual -> obtenerListaFavoritos() -> getNumCanciones()-1){
+            archivo5 << usuarioactual -> obtenerListaFavoritos() -> getCanciones()[i] << "-";
+        } else{
+            archivo5 << usuarioactual -> obtenerListaFavoritos() -> getCanciones()[i];
+        }
+    }
 }
 
 Usuario* Sistema::getusuarioactual(){
@@ -518,7 +555,7 @@ Usuario* Sistema::getusuarioactual(){
     return usuarioactual;
 }
 
-void Sistema::reproducir(FuenteReproduccion* f_user){
+void Sistema::reproducir(){
     /*Comienza la Accion de Reproducir las Canciones segun corresponde al Usuario.
     Entradas ---> Void.
     Salida ---> Void.
@@ -553,6 +590,7 @@ char Sistema::reproduccion(){
     string Opciones; int max;
     thread Input(this -> input());
     this -> reproducir(usuarioactual.getFuenteReproduccion());
+    SalidaPantalla();
     if (usuarioactual.getFuenteReproducccion -> getTipoFuente() == ALEATORIA_SISTEMA){
         max = 3;
     } else{
@@ -569,12 +607,17 @@ char Sistema::reproduccion(){
     }
 }
 
-void Sistema::pasarcancion(FuenteReproduccion* f_user){
+void Sistema::pasarcancion(){
     /*Pasa a la siguiente Cancion.
     Entradas ---> Void.
     Salida ---> Void.
     */
     tiemporeproduccion = 0;
+    contmessage++;
+    if (contmessage == 3){
+        contmessage = 0;
+        if (usuarioactual -> getMembresia()){
+            this -> MensajesAleatorios();
     if (!sesion.esModoRepetir()){
         if (f_user.haySiguiente()){
             cancionactual = f_user.siguienteCancion();
@@ -680,4 +723,76 @@ bool Sistema::BuscarCancion(const string& Id){
         }
     }
     return false;
+}
+
+void Sistema::SalidaPantalla(){
+    cout << "===========================================\n";
+    cout << "\t🎧  REPRODUCCIÓN DE MÚSICA\n";
+    cout << "===========================================\n";
+
+    if (!usuarioactual -> getMembresia()){
+        cout << "MENSAJE PUBLICITARIO - Si gozar de estas interruppciones, pasate a Premium por solo 19,900$ COP.\n";
+        cout << Mensaje -> getNombreCategoria() << " - " << Mensaje -> getContenido() << endl;
+    }
+    if (Sesion.esModoRepetir()){
+        cout << "Canción actual: " << cancionactual -> getNombre() << " Modo Repetir (ACTIVADO)" << endl;
+    } else{
+        cout << "Canción actual: " << cancionactual -> getNombre() << endl;
+    }
+    cout << "Artista: " << cancionactual -> extraerIdArtista() << endl;
+    obtenerAlbum();
+    cout << "Album: " << albumactual -> getNombre() << endl;
+    cout << "Portada Album: " << albumactual -> getPotada() << endl;
+    if (usuarioactual -> getMembresia()){
+        cout << "Direccio de Audio: " << cancionactual -> getUbicacionArchivo() << cancionactual -> obtenerRutaAudio(320) << endl;
+    } else{
+        cout << "Direccio de Audio: " << cancionactual -> getUbicacionArchivo() << cancionactual -> obtenerRutaAudio(128) << endl;
+    }
+    cout << "Duracion Cancion: " << cancionactual -> getDuracionFormateada() << endl;
+    cout << "===========================================\n";
+    cout << "Elige una de las Siguintes Opciones:\n(1) - Reproducir.\n(2) - Pausar.\n(3) - Siguiente Cancion.\n(4) - Anterior Cancion.\n(5) - Activar Modo Repetir.\n(6) - Desactivar Modo Repetir.\n(7) - Editar Lista Favoritos.\n";
+}
+
+void Sistema::obtenerAlbum(){
+    for (int i = 0; i < tamalbumes; i++){
+        for (int j = 0; j < 40 && i*40 + j < cantalbumes; j++){
+            if (cancionactual -> extraerIdAlbum == albumes[i][j]){
+                albumactual = albumes[i][j];
+            }
+        }
+    }
+}
+
+void Sistema::MensajesAleatorios(){
+    MensajePublicitario* message[5];
+    short int cont = 0, AAA = 0, B = 0, C = 0, mayor;
+    srand(time(0)); // Inicializa semilla
+    while (cont < 5){
+        int n = rand() % 50;
+        message[cont] = mensajes[n];
+        if (mensajes[n] -> getCategoria() == 3){
+            AAA++;
+        } else if (mensajes[n] -> getCategoria() == 2){
+            B++;
+        } else {
+            C++;
+        }
+    }
+    if (AAA > B){
+        if (AAA > C){
+            mayor = 3;
+        } else{
+            mayor = 1;
+        }
+    } else if (B > C){
+        mayor = 2;
+    } else {
+        mayor = 1;
+    }
+    for (int i = 0; i < cont; i++){
+        if (message[i] -> getCategoria() == mayor){
+            Mensaje = message[i];
+            break;
+        }
+    }
 }

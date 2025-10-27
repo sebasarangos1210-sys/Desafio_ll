@@ -27,25 +27,24 @@ int main (){
         while(Ingreso){
 
             cout << "Bienvenid@!! " << system_.getusuarioactual() -> getNickname() << "Has Ingresado Correctamente.\n";
+            cout << "===========================================\n";
+            cout << "\tUdeATunes - MENÚ PRINCIPAL\n";
+            cout << "===========================================\n";
+            cout << "Usuario: " << system_.getusuarioactual() -> getNickname() << cout << "|\tPlan: " << system_.getusuarioactual() -> getTipoMembresiaString() << endl;
+            cout << "-------------------------------------------\n";
+            cout << "A continuacion, Elige una de las Siguientes Opciones: ";
+            cout << "(1)🎧 Iniciar Sesion Reproduccion.\n(2)🚪 Cerrar sesión.\n";
+            cout << "-------------------------------------------\n";
             cout << "¿Que Accion Deseas Realizar?\nAccion: ";
             cin >> Opciones;
             if (system_.ComprobarMemb(system_.getusuarioactual())){
-                while (Opciones < 49 || Opciones > 56){
+                while (Opciones < 49 || Opciones > 50){
                     cout << "Has Ingresado una Opcion no Disponible.\nIntenta Nuevamente: ";
                     cin >> Opciones;
-                }
-            } else {
-                while (Opciones < 49 || Opciones > 51){
-                    cout << "Has Ingresado una Opcion no Disponible.\nIntenta Nuevamente: ";
-                    cin >> Opciones;
-                }
-                if (Opciones == '3'){
-                    Opciones = '7';
                 }
             }
-
             if (Opciones == '1'){
-
+                system_.reproduccion();
             } else if (Opciones == '7'){
                 Ingreso = false;
             } else {

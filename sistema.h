@@ -7,8 +7,7 @@
 #include "artista.h"
 #include "usuario.h"
 #include "reproduccion.h"
-#include <chrono>
-#include <thread>
+#include "cancion.h"
 
 using namespace std;
 
@@ -20,6 +19,8 @@ class Sistema {
 
         bool Login(const string& Nickname); //Metodo de ingreso al Sistema
         void Log_out(); //Metodo de Salir del Sistema
+        void SalidaPantalla();
+        void obtenerAlbum();
 
         void CargarDatos(); //Carga los Datos al Sistema
         void CargarAlbumes(Album* album, string texto);
@@ -41,8 +42,7 @@ class Sistema {
         void repetir();
         void pasarcancion(FuenteReproduccion* f_user);
         void anterior();
-        void SalidaPantalla();
-        void Favoritos(char Opcion)
+        void Favoritos(char Opcion);
 
         string getusuarioactual() const;
         Usuario* getusuarios() const; //Permite obtener el valor dedl Arreglo de Usuarios
@@ -55,12 +55,9 @@ class Sistema {
         void setCanciones(Cancion Cancion); //Ingresa la Informacion al Arreglo de Canciones
         MensajePublicitario* getMessage() const;
         void setMessage(MensajePublicitario Mensaje); //Ingresa la Informacion al Arreglo de Mensajes Publicitarios
-        Cancion* getR_Canciones() const;
-        void setR_Canciones(Cancion Cancion); //Ingresa la Informacion al Arreglo de Canciones Reproducidas
+        void MensajesAleatorios()
 
     private:
-        std::chrono::steady_clock::time_point inicioReproduccion;
-        std::chrono::seconds tiempoAcumulado{0};
         bool Exec;
         Usuario** usuarios;
         int cantusuarios;
@@ -72,13 +69,16 @@ class Sistema {
         int cantartistas;
         Cancion** canciones;
         int cantcanciones;
-        MensajePublicitario* Mensajes;
+        MensajePublicitario* Mensaje;
         Cancion** reproducidas;
         int tamcanciones;
         int tamalbumes;
         int tamartistas;
         int tamusuarios;
         int tiemporeproduccion;
+        MensajePublicitario* mensajes;
+        Album* albumactual;
+        short int contmessage;
 };
 
 #endif // SISTEMA_H
