@@ -11,8 +11,13 @@ SOURCES += \
         cancion.cpp \
         clases_credito_mensajepublicitario.cpp \
         credito.cpp \
+<<<<<<< HEAD
         fuentealeatoria.cpp \
         fuentelistafavoritos.cpp \
+=======
+        fuentereproduccion.cpp \
+        listareproduccion.cpp \
+>>>>>>> Rama_sebas
         sesionreproduccion.cpp \
         usuario.cpp
 
@@ -22,7 +27,12 @@ HEADERS += \
     artista.h \
     cancion.h \
     credito.h \
+<<<<<<< HEAD
     fuentealeatoria.h \
     fuentelistafavoritos.h \
+=======
+    fuentereproduccion.h \
+    listareproduccion.h \
+>>>>>>> Rama_sebas
     sesionreproduccion.h \
     usuario.h
