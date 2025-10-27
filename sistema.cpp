@@ -518,7 +518,7 @@ Usuario* Sistema::getusuarioactual(){
     return usuarioactual;
 }
 
-void Sistema::reproducir(){
+void Sistema::reproducir(FuenteReproduccion* f_user){
     /*Comienza la Accion de Reproducir las Canciones segun corresponde al Usuario.
     Entradas ---> Void.
     Salida ---> Void.
@@ -527,6 +527,9 @@ void Sistema::reproducir(){
         cout << "Ya el Sistema se encuentra en Reproduccion.\n";
     } else {
         sesion.iniciar();
+        if (tiemporeproduccion == 0){
+            this -> pasarcancion(f_user);
+        }
     }
 }
 
@@ -542,37 +545,26 @@ void Sistema::pausa(){
     }
 }
 
-char Sistema::reproduccion(Usuario& useractual){
+char Sistema::reproduccion(){
     /*Modela las Acciones de Interaccion con el Usuario.
     Entradas ---> Void.
     Salida ---> Void.
     */
-    string Opciones;
-    this -> reproducir();
-    FuenteReproduccion f_user = useractual.getFuenteReproduccion();
-    if (f_user.CantidadReproducidas() != 0){
-        cancionactual = f_user.siguienteCancion();
+    string Opciones; int max;
+    thread Input(this -> input());
+    this -> reproducir(usuarioactual.getFuenteReproduccion());
+    if (usuarioactual.getFuenteReproducccion -> getTipoFuente() == ALEATORIA_SISTEMA){
+        max = 3;
+    } else{
+        max = cancionactual.getDuracion();
     }
-    while (tiemporeproduccion < cancionactual.getDuracion()){
+    while (tiemporeproduccion < max && Exec){
+        this_thread::sleep_for(chrono::milliseconds(1000));
         if (sesion.enReproduccion){
             tiemporeproduccion++;
         }
-        cout << "¿Que Accion Deseas Realizar?\nAccion: ";
-        cin >> Opciones;
-
-        while (Opciones < 49 || Opciones > 53){
-            cout << "Has Ingresado una Opcion no Disponible.\nIntenta Nuevamente: ";
-            cin >> Opciones;
-        }
-
-        if (Opciones == '1'){
-            this -> reproducir();
-        } else if (Opciones == '2'){
-            this -> pausa();
-        } else if (Opciones == '3'){
-
-        } else{
-            return Opciones;
+        if (tiemporeproduccion == max){
+            this -> pasarcancion(this -> getusuarioactual() -> getFuenteReproduccion());
         }
     }
 }
@@ -583,5 +575,109 @@ void Sistema::pasarcancion(FuenteReproduccion* f_user){
     Salida ---> Void.
     */
     tiemporeproduccion = 0;
-    cancionactual = f_user.
+    if (!sesion.esModoRepetir()){
+        if (f_user.haySiguiente()){
+            cancionactual = f_user.siguienteCancion();
+        } else{
+            f_user.reiniciar();
+        }
+    }
+}
+
+void Sistema::input(){
+    char Opciones;
+    cout << "¿Que Accion Deseas Realizar?\nAccion: ";
+    cin >> Opciones;
+
+    while (Opciones < 49 || Opciones > 53){
+        cout << "Has Ingresado una Opcion no Disponible.\nIntenta Nuevamente: ";
+        cin >> Opciones;
+    }
+    if (Opciones == '1'){
+        this -> reproducir(usuarioactual.getFuenteReproduccion);
+    } else if (Opciones == '2'){
+        this -> pausa();
+    } else if (Opciones == '3'){
+        this -> pasarcancion(usuarioactual.getFuenteReproduccion);
+    } else if (Opciones == '4'){
+        this -> retroceder(usuarioactual.getFuenteReproduccion);
+    } else if (Opciones == '5'){
+        sesion.setModoRepetir(1);
+        sesion.getModoRepetir();
+    } else if (Opciones == '6'){
+        sesion.setModoRepetir(0);
+        sesion.getModoRepetir();
+    } else if (Opciones == '7'){
+        cout << "Elige (1) si deseas Seguir la Lista de Favoritos de Otro Usuario.\nElige (2) si deseas dejar de Seguir la Lista de Favoritos de Otro Usuario.\nElige (3) si deseas Agregar una Cancion a tu Lista de Favoritos.\nElige (4) si deseas Eliminar una Cancion tu Lista de Favoritos.\n";
+        cin >> Opciones;
+        while (Opciones < 49 || Opciones > 52){
+            cout << "Has Ingresado una Opcion no Disponible.\nIntenta Nuevamente: ";
+            cin >> Opciones;
+        }
+        this -> Favoritos(Opciones);
+    } else{
+        Exec = false;
+        return;
+    }
+}
+
+void Sistema::retroceder(FuenteReproduccion* f_user){
+    if (f_user.getCantidadReproducidas() == 0){
+        cout << "Aun no has escuchado Ninguna Cancion.\n";
+    } else if(sesion.anterior()){
+    }
+}
+
+bool Sistema::BuscarUsuario(const string& Nickname){
+    for (int i = 0; i < cantusuarios; i++){
+        if (usuarios[i] -> getNickname == Nickname){
+            usuarioactual.setSeguido(usuarios[i]);
+            usuarioactual.getSeguido();
+            usuarioactual.seguirListaFavoritos(usuarioactual.getSeguido());
+            return true;
+        }
+    }
+    return false;
+}
+
+void Sistema::Favoritos(char Opcion){
+    string Dato;
+    this -> pausa();
+    if (Opcion == '1'){
+        if (usuario.getSeguido() == nullptr){
+            cout << "Ingresa el nombre del Usuario que deseas seguir: ";
+            cin >> Dato;
+            while (!BuscarUsuario(Dato)){
+                cout << "El Usuario que has Ingresado no Existe.\nIntenta Nuevamente: ";
+                cin >> Dato;
+            }
+        } else{
+            cout << "Ya sigues a un Usuario.\n";
+        }
+    } else if (Opcion == '2'){
+    } else if (Opcion == '3'){
+        cout << "Ingresa el nombre de la Cancion que deseas Agregar: ";
+        cin >> Dato;
+        while (!BuscarCancion(Dato)){
+            cout << "El Id que has Ingresado no Existe.\nIntenta Nuevamente: ";
+            cin >> Dato;
+        }
+    } else {
+        cout << "Ingresa el nombre de la Cancion que deseas Eliminar: ";
+        cin >> Dato;
+        while (!usuarioactual.eliminarDeFavoritos()){
+            cout << "El Id que has Ingresado no Existe.\nIntenta Nuevamente: ";
+            cin >> Dato;
+        }
+    }
+}
+
+bool Sistema::BuscarCancion(const string& Id){
+    for (int i = 0; i < cantcanciones; i++){
+        if (canciones[i] -> getId == Id){
+            usuarioactual.agregarAFavoritos(canciones[i]);
+            return true;
+        }
+    }
+    return false;
 }

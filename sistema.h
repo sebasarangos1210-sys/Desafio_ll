@@ -20,7 +20,6 @@ class Sistema {
 
         bool Login(const string& Nickname); //Metodo de ingreso al Sistema
         void Log_out(); //Metodo de Salir del Sistema
-        //void R_musica(); // Metodo para Modelar la Reproduccion Musical
 
         void CargarDatos(); //Carga los Datos al Sistema
         void CargarAlbumes(Album* album, string texto);
@@ -34,15 +33,16 @@ class Sistema {
         void agregarusuarios(int& filas, int& columnas, int& tamusuarios, const Usuario* user);
 
         bool ComprobarMemb(const Usuario* usuarioactual); //Verifica la Membresia del Usuario
-        char reproduccion(Usuario& useractual);
+        char reproduccion();
+        bool BuscarUsuario(const string& Nickname);
         void reproducir();
         void pausa();
-        void buscarUsuario();
-        void BuscarCancion();
+        bool BuscarCancion(const string& Id);
         void repetir();
-        void siguiente();
+        void pasarcancion(FuenteReproduccion* f_user);
         void anterior();
         void SalidaPantalla();
+        void Favoritos(char Opcion)
 
         string getusuarioactual() const;
         Usuario* getusuarios() const; //Permite obtener el valor dedl Arreglo de Usuarios
@@ -61,6 +61,7 @@ class Sistema {
     private:
         std::chrono::steady_clock::time_point inicioReproduccion;
         std::chrono::seconds tiempoAcumulado{0};
+        bool Exec;
         Usuario** usuarios;
         int cantusuarios;
         Usuario* usuarioactual;
