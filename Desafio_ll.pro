@@ -11,7 +11,8 @@ SOURCES += \
         cancion.cpp \
         clases_credito_mensajepublicitario.cpp \
         credito.cpp \
-<<<<<<< HEAD
+<<<<<<< HEAD \
+    main.cpp
 <<<<<<< HEAD
         fuentealeatoria.cpp \
         fuentelistafavoritos.cpp \

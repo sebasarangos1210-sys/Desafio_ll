@@ -69,6 +69,7 @@ class Sistema {
         int cantartistas;
         Cancion** canciones;
         int cantcanciones;
+        int cancionesreproducidas;
         MensajePublicitario* Mensaje;
         Cancion** reproducidas;
         int tamcanciones;
