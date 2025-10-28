@@ -796,3 +796,18 @@ void Sistema::MensajesAleatorios(){
         }
     }
 }
+Sistema::Sistema()
+    : artistas(nullptr), numArtistas(0), capacidadArtistas(100) {
+    artistas = new Artista*[capacidadArtistas];
+    for (int i = 0; i < capacidadArtistas; i++) {
+        artistas[i] = nullptr;
+    }
+}
+
+void Sistema::agregarArtista(Artista* artista) {
+    if (numArtistas >= capacidadArtistas) {
+        redimensionar();
+    }
+    artistas[numArtistas] = artista;  // Guardar puntero
+    numArtistas++;
+}

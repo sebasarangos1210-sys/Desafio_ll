@@ -4,25 +4,19 @@ CONFIG -= app_bundle
 CONFIG -= qt
 
 SOURCES += \
-        MainPrueba.cpp \
         MensajePublicitario.cpp \
         album.cpp \
         artista.cpp \
         cancion.cpp \
-        clases_credito_mensajepublicitario.cpp \
         credito.cpp \
 <<<<<<< HEAD
 <<<<<<< HEAD
-        fuentealeatoria.cpp \
-        fuentelistafavoritos.cpp \
 =======
         fuentereproduccion.cpp \
         listareproduccion.cpp \
 >>>>>>> Rama_sebas
         sesionreproduccion.cpp \
 =======
-        fuentealeatoria.cpp \
-        fuentelistafavoritos.cpp \
         main.cpp \
         sesionreproduccion.cpp \
         sistema.cpp \
@@ -37,8 +31,6 @@ HEADERS += \
     credito.h \
 <<<<<<< HEAD
 <<<<<<< HEAD
-    fuentealeatoria.h \
-    fuentelistafavoritos.h \
 =======
     fuentereproduccion.h \
     listareproduccion.h \

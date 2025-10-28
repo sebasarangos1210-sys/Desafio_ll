@@ -17,6 +17,9 @@ private:
     int capacidadAlbumes;
 
     void redimensionarAlbumes();
+    Artista** artistas;
+    int numArtistas;
+    int capacidadArtistas;
 
 public:
     Artista();
