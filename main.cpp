@@ -28,12 +28,12 @@ int main (){
 
             cout << "Bienvenid@!! " << system_.getusuarioactual() -> getNickname() << "Has Ingresado Correctamente.\n";
             cout << "===========================================\n";
-            cout << "\tUdeATunes - MENÚ PRINCIPAL\n";
+            cout << "\tUdeATunes - MENU PRINCIPAL\n";
             cout << "===========================================\n";
             cout << "Usuario: " << system_.getusuarioactual() -> getNickname() << cout << "|\tPlan: " << system_.getusuarioactual() -> getTipoMembresiaString() << endl;
             cout << "-------------------------------------------\n";
             cout << "A continuacion, Elige una de las Siguientes Opciones: ";
-            cout << "(1)🎧 Iniciar Sesion Reproduccion.\n(2)🚪 Cerrar sesión.\n";
+            cout << "\n(1)🎧 Iniciar Sesion Reproduccion.\n(2)🚪 Cerrar sesión.\n";
             cout << "-------------------------------------------\n";
             cout << "¿Que Accion Deseas Realizar?\nAccion: ";
             cin >> Opciones;
@@ -45,11 +45,8 @@ int main (){
             }
             if (Opciones == '1'){
                 system_.reproduccion();
-            } else if (Opciones == '7'){
+            } else{
                 Ingreso = false;
-            } else {
-                Ingreso = false;
-                cout << "Cerrando tu sesion......\n";
             }
         }
         cout << "¿Deseas Salir de la App?\n- Ingresa (y) en caso de que salir del Programa.\n- Ingresa (n) en caso de que desees volver a ingresar al Sistema.\n";

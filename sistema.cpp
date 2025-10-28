@@ -13,8 +13,61 @@
 
 using namespace std;
 
-Sistema::Sistema(): usuarios(NULL), artistas(NULL), albumes(NULL),
-    Mensajes(NULL), reproducidas(NULL), canciones(NULL), usuarioactual(NULL), cantartistas(0), cantalbumes(0), cantusuarios(0), cantcanciones(0) {}
+Sistema::Sistema()
+    : usuarios(nullptr), artistas(nullptr), albumes(nullptr),
+    Mensaje(nullptr), reproducidas(nullptr), canciones(nullptr),
+    usuarioactual(nullptr), cancionactual(nullptr),
+    albumactual(nullptr), mensajes(nullptr),
+    cantartistas(0), cantalbumes(0), cantusuarios(0), cantcanciones(0),
+    tamartistas(0), tamalbumes(0), tamusuarios(0), tamcanciones(0),
+    tiemporeproduccion(0), contmessage(0), Exec(true), cancionesreproducidas(0) {
+}
+
+Sistema::~Sistema() {
+    if (usuarios != nullptr) {
+        for (int i = 0; i < tamusuarios; i++) {
+            if (usuarios[i] != nullptr) {
+                delete[] usuarios[i];
+            }
+        }
+        delete[] usuarios;
+    }
+
+    // Liberar artistas
+    if (artistas != nullptr) {
+        for (int i = 0; i < tamartistas; i++) {
+            if (artistas[i] != nullptr) {
+                delete[] artistas[i];
+            }
+        }
+        delete[] artistas;
+    }
+
+    // Liberar álbumes
+    if (albumes != nullptr) {
+        for (int i = 0; i < tamalbumes; i++) {
+            if (albumes[i] != nullptr) {
+                delete[] albumes[i];
+            }
+        }
+        delete[] albumes;
+    }
+
+    // Liberar canciones
+    if (canciones != nullptr) {
+        for (int i = 0; i < tamcanciones; i++) {
+            if (canciones[i] != nullptr) {
+                delete[] canciones[i];
+            }
+        }
+        delete[] canciones;
+    }
+
+    // Liberar mensajes
+    if (mensajes != nullptr) {
+        delete[] mensajes;
+    }
+}
 
 bool Sistema::Login(const string& Nickname){
     /*Verifica y Busca si el Usuario que va a Ingresar al Sistema se encuentre Registrado.
@@ -53,6 +106,12 @@ void Sistema::CargarDatos(){
     ifstream archivo4("Usuarios.txt");
     ifstream archivo5("List.Favoritos.txt");
     ifstream archivo6 ("Mensajes.txt");
+
+
+    if (!archivo||!archivo1||!archivo2||!archivo3||!archivo4||!archivo5||!archivo5){
+        cout << "No se pudo realizar la lectura de los archivos.\n";
+        return;
+    }
 
     tamartistas = 2; int filas = 0, columna = 0;
     artistas = new Artista*[tamartistas];
@@ -587,8 +646,11 @@ char Sistema::reproduccion(){
     Entradas ---> Void.
     Salida ---> Void.
     */
-    string Opciones; int max;
+    char Opciones; int max;
     thread Input(this -> input());
+    if (!Exec){
+        Exec = true;
+    }
     this -> reproducir(usuarioactual.getFuenteReproduccion());
     SalidaPantalla();
     if (usuarioactual.getFuenteReproducccion -> getTipoFuente() == ALEATORIA_SISTEMA){
@@ -613,6 +675,7 @@ void Sistema::pasarcancion(){
     Salida ---> Void.
     */
     tiemporeproduccion = 0;
+    cancionesreproducidas++;
     contmessage++;
     if (contmessage == 3){
         contmessage = 0;
@@ -627,12 +690,12 @@ void Sistema::pasarcancion(){
     }
 }
 
-void Sistema::input(){
+void Sistema::input(char Opcion){
     char Opciones;
     cout << "¿Que Accion Deseas Realizar?\nAccion: ";
     cin >> Opciones;
 
-    while (Opciones < 49 || Opciones > 53){
+    while (Opciones < 49 || Opciones > 56){
         cout << "Has Ingresado una Opcion no Disponible.\nIntenta Nuevamente: ";
         cin >> Opciones;
     }
@@ -698,6 +761,7 @@ void Sistema::Favoritos(char Opcion){
             cout << "Ya sigues a un Usuario.\n";
         }
     } else if (Opcion == '2'){
+
     } else if (Opcion == '3'){
         cout << "Ingresa el nombre de la Cancion que deseas Agregar: ";
         cin >> Dato;
@@ -713,6 +777,7 @@ void Sistema::Favoritos(char Opcion){
             cin >> Dato;
         }
     }
+    this -> reproducir();
 }
 
 bool Sistema::BuscarCancion(const string& Id){
@@ -730,7 +795,7 @@ void Sistema::SalidaPantalla(){
     cout << "\t🎧  REPRODUCCIÓN DE MÚSICA\n";
     cout << "===========================================\n";
 
-    if (!usuarioactual -> getMembresia()){
+    if (!usuarioactual -> getMembresia() && cancionesreproducidas%2 == 0){
         cout << "MENSAJE PUBLICITARIO - Si gozar de estas interruppciones, pasate a Premium por solo 19,900$ COP.\n";
         cout << Mensaje -> getNombreCategoria() << " - " << Mensaje -> getContenido() << endl;
     }
@@ -750,7 +815,7 @@ void Sistema::SalidaPantalla(){
     }
     cout << "Duracion Cancion: " << cancionactual -> getDuracionFormateada() << endl;
     cout << "===========================================\n";
-    cout << "Elige una de las Siguintes Opciones:\n(1) - Reproducir.\n(2) - Pausar.\n(3) - Siguiente Cancion.\n(4) - Anterior Cancion.\n(5) - Activar Modo Repetir.\n(6) - Desactivar Modo Repetir.\n(7) - Editar Lista Favoritos.\n";
+    cout << "Elige una de las Siguintes Opciones:\n(1) - Reproducir.\n(2) - Pausar.\n(3) - Siguiente Cancion.\n(4) - Anterior Cancion.\n(5) - Activar Modo Repetir.\n(6) - Desactivar Modo Repetir.\n(7) - Editar Lista Favoritos.\n(8) - Cerrar Sesion Reproduccion.\n";
 }
 
 void Sistema::obtenerAlbum(){

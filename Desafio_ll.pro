@@ -9,7 +9,8 @@ SOURCES += \
         artista.cpp \
         cancion.cpp \
         credito.cpp \
-<<<<<<< HEAD
+<<<<<<< HEAD \
+    main.cpp
 <<<<<<< HEAD
 =======
         fuentereproduccion.cpp \
