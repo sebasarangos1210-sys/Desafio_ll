@@ -60,4 +60,109 @@ int main (){
         }
         system("cls");
     }
+    void mostrarMedicionRecursosDetallada(Sistema* sistema, SesionReproduccion* sesionActual,
+                                          int iteracionesFuncionalidad,
+                                          const string& nombreFuncionalidad) {
+
+        cout << "\n";
+        cout << "╔══════════════════════════════════════════════════════════════╗\n";
+        cout << "║           MEDICIÓN DETALLADA DE RECURSOS                     ║\n";
+        cout << "╚══════════════════════════════════════════════════════════════╝\n";
+        cout << "Funcionalidad: " << nombreFuncionalidad << "\n";
+        cout << "══════════════════════════════════════════════════════════════\n\n";
+
+
+        // 1. ITERACIONES
+
+        cout << "📊 MÉTRICAS DE ITERACIONES\n";
+        cout << "──────────────────────────────────────────────────────────────\n";
+        cout << "   Iteraciones en esta funcionalidad: " << iteracionesFuncionalidad << "\n";
+        cout << "   Complejidad estimada: O(n)\n\n";
+
+
+        // 2. MEMORIA DETALLADA
+
+        int memoriaTotal = 0;
+
+        cout << "💾 DESGLOSE DE MEMORIA POR COMPONENTE\n";
+        cout << "──────────────────────────────────────────────────────────────\n";
+
+        // Sistema y sus componentes
+        if (sistema != nullptr) {
+            int memArtistas = 0;
+            int memUsuarios = 0;
+            int memMensajes = 0;
+            int numArtistas = sistema->getNumArtistas();
+            int numUsuarios = sistema->getNumUsuarios();
+            int numMensajes = sistema->getNumMensajes();
+
+            // Calcular memoria de artistas (incluye álbumes y canciones)
+            for (int i = 0; i < numArtistas; i++) {
+                Artista* artista = sistema->getArtista(i);
+                if (artista != nullptr) {
+                    memArtistas += artista->calcularMemoriaUsada();
+                }
+            }
+
+            // Calcular memoria de usuarios
+            for (int i = 0; i < numUsuarios; i++) {
+                Usuario* usuario = sistema->getUsuario(i);
+                if (usuario != nullptr) {
+                    memUsuarios += usuario->calcularMemoriaUsada();
+                }
+            }
+
+            // Calcular memoria de mensajes publicitarios
+            for (int i = 0; i < numMensajes; i++) {
+                MensajePublicitario* mensaje = sistema->getMensaje(i);
+                if (mensaje != nullptr) {
+                    memMensajes += mensaje->calcularMemoriaUsada();
+                }
+            }
+
+            int memSistemaBase = sizeof(*sistema) +
+                                 (sistema->getCapacidadArtistas() * sizeof(Artista*)) +
+                                 (sistema->getCapacidadUsuarios() * sizeof(Usuario*)) +
+                                 (sistema->getCapacidadMensajes() * sizeof(MensajePublicitario*));
+
+            cout << "   [SISTEMA]\n";
+            cout << "   ├─ Estructura base:     " << memSistemaBase << " bytes\n";
+            cout << "   ├─ Artistas (" << numArtistas << "):      "
+                 << memArtistas << " bytes\n";
+            cout << "   ├─ Usuarios (" << numUsuarios << "):      "
+                 << memUsuarios << " bytes\n";
+            cout << "   └─ Mensajes (" << numMensajes << "):       "
+                 << memMensajes << " bytes\n";
+
+            int totalSistema = memSistemaBase + memArtistas + memUsuarios + memMensajes;
+            cout << "   SUBTOTAL SISTEMA:       " << totalSistema << " bytes\n\n";
+            memoriaTotal += totalSistema;
+        }
+
+        // Sesión de reproducción
+        if (sesionActual != nullptr) {
+            int memSesion = sesionActual->calcularMemoriaUsada();
+            cout << "   [SESIÓN DE REPRODUCCIÓN]\n";
+            cout << "   └─ Sesión actual:       " << memSesion << " bytes\n";
+            cout << "   SUBTOTAL SESIÓN:        " << memSesion << " bytes\n\n";
+            memoriaTotal += memSesion;
+        }
+
+
+        // 3. RESUMEN FINAl
+
+        cout << "──────────────────────────────────────────────────────────────\n";
+        cout << "   MEMORIA TOTAL:          " << memoriaTotal << " bytes\n";
+        cout << "                           " << fixed << setprecision(2)
+             << (memoriaTotal / 1024.0) << " KB\n";
+        cout << "                           " << fixed << setprecision(4)
+             << (memoriaTotal / 1048576.0) << " MB\n";
+
+        // Estimación de memoria disponible típica
+        double porcentajeRAM = (memoriaTotal / (8.0 * 1024 * 1024 * 1024)) * 100; // Asumiendo 8GB RAM
+        cout << "                           ~" << fixed << setprecision(6)
+             << porcentajeRAM << "% de 8GB RAM\n";
+
+        cout << "══════════════════════════════════════════════════════════════\n\n";
+    }
 }
